@@ -1,0 +1,49 @@
+#ifndef POND_ORGANISM_H
+#define POND_ORGANISM_H
+
+#include "pond/pangenome.h"
+#include "pond/painter.h"
+#include "raylib.h"
+#include <stdbool.h>
+
+typedef struct Organism Organism;
+
+struct Organism {
+    Genome genome;
+    Dna dna;
+    Motor *motor;
+    Appearance *appearance;
+    Senses *senses;
+    Painter *painter;
+    float startMass;
+    float mass;
+    float age;
+    Color randomColour;
+    Color colour;
+    bool isDead;
+    Organism **collidingWith;
+    int collidingCount;
+    int collidingCapacity;
+};
+
+Organism *organism_create(Painter *painter, Genome *genome, Vector2 displacement);
+void organism_update(Organism *o);
+void organism_show(Organism *o);
+void organism_chomp(Organism *o, Organism *other);
+Vector2 organism_displacement(Organism *o);
+void organism_setDisplacement(Organism *o, Vector2 v);
+Vector2 organism_velocity(Organism *o);
+void organism_setVelocity(Organism *o, Vector2 v);
+Vector2 organism_acceleration(Organism *o);
+void organism_setAcceleration(Organism *o, Vector2 v);
+float organism_howFat(Organism *o);
+Organism *organism_makeBaby(Organism *o);
+float organism_timeOffset(Organism *o);
+void organism_photosynthesise(Organism *o);
+float organism_maxMass(Organism *o);
+void organism_sense(Organism *o, Organism *other);
+Species organism_species(Organism *o);
+bool organism_canIEat(Organism *o, Organism *other);
+void organism_addColliding(Organism *o, Organism *other);
+
+#endif
