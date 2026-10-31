@@ -1,0 +1,132 @@
+[
+  {
+    "file": "src/main.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/main.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/log.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/log.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/pangenome.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/pangenome.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/motor.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/motor.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/senses.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/senses.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/appearance.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/appearance.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/organism.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/organism.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/painter.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/painter.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/population.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/population.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  },
+  {
+    "file": "src/pond/pond.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Isrc",
+      "-I/usr/include",
+      "src/pond/pond.c",
+      "-o",
+      "build/pond"
+    ],
+    "directory": "/home/krishen/Repos/pondc",
+    "output": "build/pond"
+  }
+]
