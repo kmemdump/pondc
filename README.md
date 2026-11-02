@@ -36,3 +36,8 @@ Note: `pkg-config` is not installed; the Makefile uses explicit flags
 
 `./build/pond` requires a display (GLFW/OpenGL); run under `timeout` if you just
 want to smoke-test startup.
+
+## TODO
+
+- Create an editable architectural diagram and commit it to the codebase
+- Remove reference to genome in organism
