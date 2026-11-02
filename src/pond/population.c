@@ -43,7 +43,7 @@ Vector2 population_randomDisplacement(Population *p) {
 }
 
 void population_update(Population *p, Painter *painter) {
-  int speciesCounts[3] = {0, 0, 0};
+  int speciesCounts[4] = {0, 0, 0, 0};
   float mass = 0;
 
   Organism **theBabies = NULL;
@@ -116,7 +116,7 @@ void population_update(Population *p, Painter *painter) {
   pond_log_info(buf);
   snprintf(buf, sizeof(buf), "Population size : %d", p->organismCount);
   pond_log_info(buf);
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < SPECIES_SNAKE + 1; i++) {
     char sbuf[128];
     snprintf(sbuf, sizeof(sbuf), "Species: %d, Count: %d", i, speciesCounts[i]);
     pond_log_info(sbuf);
