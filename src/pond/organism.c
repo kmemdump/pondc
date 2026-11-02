@@ -12,17 +12,16 @@ Organism *organism_create(Painter *painter, Genome *genome,
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
   o->painter = painter;
   o->genome = *genome;
-  Dna *dna = genome_createDna(genome);
-  o->dna = *dna;
-  free(dna);
+  genome_createDna(genome);
 
-  o->startMass = pond_random(o->dna.lowerMassLimit, o->dna.upperMassLimit);
+  o->startMass =
+      pond_random(o->genome.dna.lowerMassLimit, o->genome.dna.upperMassLimit);
   o->mass = o->startMass;
-  o->colour = o->dna.colour;
+  o->colour = o->genome.dna.colour;
   o->randomColour = painter_randomColour(painter);
 
   o->motor = genome_createMotor(&o->genome, o, displacement, pond_vrandom2D());
-  o->appearance = genome_createAppearance(&o->genome, o, o->dna.colour);
+  o->appearance = genome_createAppearance(&o->genome, o, o->genome.dna.colour);
   o->senses = genome_createSenses(&o->genome, o);
 
   return o;
@@ -30,14 +29,14 @@ Organism *organism_create(Painter *painter, Genome *genome,
 
 void organism_update(Organism *o) {
   o->age += CLOCK_INCREMENT;
-  o->mass -= CLOCK_INCREMENT * o->dna.metabolicRate / ENTROPY;
+  o->mass -= CLOCK_INCREMENT * o->genome.dna.metabolicRate / ENTROPY;
 
-  if (o->mass < o->startMass / o->dna.emaciationQuotient) {
+  if (o->mass < o->startMass / o->genome.dna.emaciationQuotient) {
     o->isDead = true;
     return;
   }
 
-  if (o->age > o->dna.maxAge) {
+  if (o->age > o->genome.dna.maxAge) {
     o->isDead = true;
   }
 
@@ -86,7 +85,7 @@ void organism_setAcceleration(Organism *o, Vector2 v) {
 }
 
 float organism_howFat(Organism *o) {
-  return (o->mass - o->startMass) / o->startMass * o->dna.fertility;
+  return (o->mass - o->startMass) / o->startMass * o->genome.dna.fertility;
 }
 
 Organism *organism_makeBaby(Organism *o) {
@@ -97,7 +96,7 @@ Organism *organism_makeBaby(Organism *o) {
   displacement = pond_vadd(displacement, organism_displacement(o));
 
   Organism *baby = organism_create(o->painter, &o->genome, displacement);
-  baby->mass = o->mass * o->dna.fissionFactor * ENTROPY;
+  baby->mass = o->mass * o->genome.dna.fissionFactor * ENTROPY;
   organism_setVelocity(baby, baby->motor->velocity);
   o->mass = (o->mass - baby->mass / ENTROPY) * ENTROPY;
 
@@ -112,26 +111,27 @@ Organism *organism_makeBaby(Organism *o) {
 float organism_timeOffset(Organism *o) { return o->motor->timeOffset; }
 
 void organism_photosynthesise(Organism *o) {
-  if (o->dna.photosynthesisIncrement <= 0) {
+  if (o->genome.dna.photosynthesisIncrement <= 0) {
     return;
   }
-  o->mass += o->dna.photosynthesisIncrement;
+  o->mass += o->genome.dna.photosynthesisIncrement;
 }
 
 float organism_maxMass(Organism *o) {
-  return o->startMass * o->dna.maxFoodCapacityCoefficient;
+  return o->startMass * o->genome.dna.maxFoodCapacityCoefficient;
 }
 
 void organism_sense(Organism *o, Organism *other) {
   senses_update(o->senses, other);
 }
 
-Species organism_species(Organism *o) { return o->dna.species; }
+Species organism_species(Organism *o) { return o->genome.species; }
 
 bool organism_canIEat(Organism *o, Organism *other) {
-  return (o->mass * o->dna.predatorFactor) > other->mass && !other->isDead &&
-         o->mass < o->startMass * o->dna.maxFoodCapacityCoefficient &&
-         genome_diet_contains(&o->genome, other->dna.species);
+  return (o->mass * o->genome.dna.predatorFactor) > other->mass &&
+         !other->isDead &&
+         o->mass < o->startMass * o->genome.dna.maxFoodCapacityCoefficient &&
+         genome_diet_contains(&o->genome, other->genome.species);
 }
 
 void organism_addColliding(Organism *o, Organism *other) {

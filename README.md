@@ -40,4 +40,3 @@ want to smoke-test startup.
 ## TODO
 
 - Create an editable architectural diagram and commit it to the codebase
-- Remove reference to genome in organism

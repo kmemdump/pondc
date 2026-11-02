@@ -59,9 +59,8 @@ bool genome_diet_contains(Genome *g, Species species) {
   return false;
 }
 
-Dna *genome_createDna(Genome *g) {
+void *genome_createDna(Genome *g) {
   Dna *dna = (Dna *)calloc(1, sizeof(Dna));
-  dna->species = g->species;
 
   if (g->species == SPECIES_SNAKE) {
     dna->colour = MAROON;
@@ -101,7 +100,7 @@ Dna *genome_createDna(Genome *g) {
     dna->emaciationQuotient = 5;
   }
 
-  return dna;
+  g->dna = *dna;
 }
 
 Motor *genome_createMotor(Genome *g, Organism *organism,
