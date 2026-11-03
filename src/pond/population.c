@@ -5,34 +5,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void population_init(Population *p, Painter *painter, int size) {
-  p->organismCapacity = 100000;
+#define POPULATION_SIZE 100
+#define BIOMASS_LIMIT 4000.0f
+#define POPULATION_CAPACITY 100000
+
+void population_init(Population *p, Painter *painter) {
+  p->organismCapacity = POPULATION_CAPACITY;
   p->organisms = (Organism **)malloc(sizeof(Organism *) * p->organismCapacity);
   p->organismCount = 0;
   p->mass = 0;
 
-  for (int i = 0; i < size; i++) {
-    Genome *genome = pangenome_getGenome(
-        &p->pangenome, pangenome_randomSpecies(&p->pangenome));
-    if (genome == NULL) {
-      return;
+  for (int i = SPECIES_ALGAE; i < SPECIES_SNAKE + 1; i++) {
+    Genome *genome = pangenome_getGenome(&p->pangenome, i);
+    for (int j = 0; j < genome->initCountMax; j++) {
+      Vector2 displacement = {pond_random(0, g_width),
+                              pond_random(0, g_height)};
+      population_add(p, painter,
+                     organism_create(painter, genome, displacement));
     }
-    if (genome->initCount > genome->initCountMax) {
-      return;
-    }
-    genome->initCount++;
-    Vector2 displacement = pond_vcopy(
-        (Vector2){pond_random(0, g_width), pond_random(0, g_height)});
-    population_add(p, painter, organism_create(painter, genome, displacement));
   }
 }
 
 Organism *population_add(Population *p, Painter *painter, Organism *organism) {
-  if (p->organismCount >= p->organismCapacity) {
-    p->organismCapacity *= 2;
-    p->organisms = (Organism **)realloc(p->organisms, sizeof(Organism *) *
-                                                          p->organismCapacity);
-  }
   p->organisms[p->organismCount] = organism;
   p->organismCount++;
   return organism;
@@ -116,7 +110,7 @@ void population_update(Population *p, Painter *painter) {
     speciesCounts[organism->genome.species]++;
   }
 
-  g_biomassLock = (mass > g_biomassLimit);
+  g_biomassLock = (mass > BIOMASS_LIMIT);
 
   char buf[128];
   snprintf(buf, sizeof(buf), "Total biomass: %f", mass);

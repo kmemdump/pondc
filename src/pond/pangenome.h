@@ -24,7 +24,6 @@ struct Dna {
 struct Genome {
   Species species;
   Dna dna;
-  int initCount;
   int initCountMax;
   Species diet[2];
   int dietCount;
@@ -39,7 +38,6 @@ struct Pangenome {
 };
 
 void pangenome_init(Pangenome *p);
-Species pangenome_randomSpecies(Pangenome *p);
 Genome *pangenome_getGenome(Pangenome *p, Species species);
 void *genome_createDna(Genome *g);
 Motor *genome_createMotor(Genome *g, Organism *organism,

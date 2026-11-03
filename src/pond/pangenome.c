@@ -3,26 +3,28 @@
 #include "pond/log.h"
 #include "pond/motor.h"
 #include "pond/senses.h"
+#include "pond/types.h"
 #include <raylib.h>
 #include <stdlib.h>
 
+#define SNAKE_COUNT_INIT 2
+#define FISH_COUNT_INIT 6
+#define ALGAE_COUNT_INIT 1000
+
 void pangenome_init(Pangenome *p) {
   p->snake.species = SPECIES_SNAKE;
-  p->snake.initCount = 0;
-  p->snake.initCountMax = g_snakeCountInit;
+  p->snake.initCountMax = SNAKE_COUNT_INIT;
   p->snake.dietCount = 1;
   p->snake.diet[0] = SPECIES_FISH;
 
   p->fish.species = SPECIES_FISH;
-  p->fish.initCount = 0;
-  p->fish.initCountMax = g_fishCountInit;
+  p->fish.initCountMax = FISH_COUNT_INIT;
   p->fish.dietCount = 2;
   p->fish.diet[0] = SPECIES_SNAKE;
   p->fish.diet[1] = SPECIES_ALGAE;
 
   p->algae.species = SPECIES_ALGAE;
-  p->algae.initCount = 0;
-  p->algae.initCountMax = g_algaeCountInit;
+  p->algae.initCountMax = ALGAE_COUNT_INIT;
   p->algae.dietCount = 0;
 
   p->speciesCount = 3;

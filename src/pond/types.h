@@ -27,20 +27,10 @@ extern float g_entropy;
 extern float g_width;
 extern float g_height;
 extern bool g_biomassLock;
-extern int g_populationSize;
-extern float g_biomassLimit;
-extern int g_snakeCountInit;
-extern int g_fishCountInit;
-extern int g_algaeCountInit;
 
 #define CLOCK_MAX 360.0f
 #define CLOCK_INCREMENT 0.05f
 #define ENTROPY 0.99f
-#define POPULATION_SIZE 100
-#define BIOMASS_LIMIT 4000.0f
-#define SNAKE_COUNT_INIT 2
-#define FISH_COUNT_INIT 6
-#define ALGAE_COUNT_INIT 9999999
 #define SENSE_DISTANCE 200.0f
 #define ATTRACTION_RATE 10.0f
 #define REPULSION_RATE 8.0f

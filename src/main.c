@@ -57,9 +57,7 @@ int main(void) {
 
   while (!WindowShouldClose()) {
     BeginDrawing();
-
     pond_update(&pond);
-
     EndDrawing();
   }
 

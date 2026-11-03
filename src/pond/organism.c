@@ -46,7 +46,7 @@ void organism_update(Organism *o) {
 }
 
 void organism_show(Organism *o) {
-  // appearance_show(o->appearance);
+  appearance_show(o->appearance);
   painter_show_organism(o->painter, o);
 }
 
