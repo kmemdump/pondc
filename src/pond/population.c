@@ -20,16 +20,10 @@ void population_init(Population *p, Painter *painter) {
     for (int j = 0; j < genome->initCountMax; j++) {
       Vector2 displacement = {pond_random(0, g_width),
                               pond_random(0, g_height)};
-      population_add(p, painter,
-                     organism_create(painter, genome, displacement));
+      p->organisms[p->organismCount++] =
+          organism_create(painter, genome, displacement);
     }
   }
-}
-
-Organism *population_add(Population *p, Painter *painter, Organism *organism) {
-  p->organisms[p->organismCount] = organism;
-  p->organismCount++;
-  return organism;
 }
 
 Vector2 population_randomDisplacement(Population *p) {
