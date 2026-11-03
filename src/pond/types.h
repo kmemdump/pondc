@@ -8,9 +8,9 @@
 
 typedef enum Species {
   SPECIES_NULL = 0,
-  SPECIES_ALGAE = 1,
-  SPECIES_FISH = 2,
-  SPECIES_SNAKE = 3
+  SPECIES_ALGAE,
+  SPECIES_FISH,
+  SPECIES_SNAKE
 } Species;
 
 typedef struct Organism Organism;
@@ -41,16 +41,16 @@ extern int g_algaeCountInit;
 #define SNAKE_COUNT_INIT 2
 #define FISH_COUNT_INIT 6
 #define ALGAE_COUNT_INIT 9999999
-#define SENS_DISTANCE 100.0f
-#define ATTRACTION_RATE 2.0f
-#define REPULSION_RATE 3.0f
+#define SENSE_DISTANCE 200.0f
+#define ATTRACTION_RATE 10.0f
+#define REPULSION_RATE 8.0f
 
 #define TERMINAL_VELOCITY 1.0f
 #define STAGNANT_VELOCITY 0.5f
-#define COLLISION_DAMPING_FACTOR -0.9f
-#define ACCELERATION_NOISE_FACTOR 15.0f
-#define ACCELERATION_GROWTH_FACTOR 0.45f
-#define SLITHER_FACTOR 1.0f
+#define COLLISION_DAMPING_FACTOR -0.1f
+#define ACCELERATION_NOISE_FACTOR 0.5f
+#define ACCELERATION_GROWTH_FACTOR 0.5f
+#define SLITHER_FACTOR 0.9f
 
 /* PVector stand-ins implemented on top of raylib Vector2. */
 static inline Vector2 pond_vcopy(Vector2 v) { return v; }

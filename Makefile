@@ -1,5 +1,6 @@
 CC := gcc
 CFLAGS := -Isrc -I/usr/include
+CDEBUGFLAGS := -g -rdynamic -fsanitize=address
 LDLIBS := -lraylib -lm
 
 BUILD_DIR := build
@@ -11,6 +12,10 @@ SRCS := src/main.c src/pond/log.c src/pond/pangenome.c src/pond/motor.c src/pond
 all: build
 
 build: $(TARGET)
+
+debug: $(SRCS)
+	mkdir -p $(BUILD_DIR)
+	$(CC) $(CDEBUGFLAGS) $(CFLAGS) $(SRCS) -o $(TARGET)-debug $(LDLIBS)
 
 $(TARGET): $(SRCS)
 	mkdir -p $(BUILD_DIR)

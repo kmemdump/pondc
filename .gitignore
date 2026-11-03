@@ -1,2 +1,4 @@
 # Build artifacts
 build/
+log
+app.log

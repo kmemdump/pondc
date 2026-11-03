@@ -5,6 +5,7 @@
 #include "pond/painter.h"
 #include "pond/senses.h"
 #include "pond/types.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 Organism *organism_create(Painter *painter, Genome *genome,
@@ -45,11 +46,20 @@ void organism_update(Organism *o) {
 }
 
 void organism_show(Organism *o) {
-  appearance_show(o->appearance);
+  // appearance_show(o->appearance);
   painter_show_organism(o->painter, o);
 }
 
 void organism_chomp(Organism *o, Organism *other) {
+  char buf[128];
+  snprintf(buf, sizeof(buf), "organism_chomp: Prey species: %d",
+           organism_species(other));
+  log_debug(buf);
+
+  snprintf(buf, sizeof(buf), "organism_chomp: Predator species: %d",
+           organism_species(o));
+  log_debug(buf);
+
   o->mass = (o->mass + other->mass) * ENTROPY;
   other->isDead = true;
 
@@ -66,6 +76,8 @@ void organism_chomp(Organism *o, Organism *other) {
 
   painter_show_flag(o->painter, other, MAROON,
                     o->painter->drawPredation || o->painter->drawDead);
+
+  log_debug("organism chomp: complete");
 }
 
 Vector2 organism_displacement(Organism *o) { return o->motor->displacement; }
@@ -136,7 +148,7 @@ bool organism_canIEat(Organism *o, Organism *other) {
 
 void organism_addColliding(Organism *o, Organism *other) {
   if (o->collidingCount >= o->collidingCapacity) {
-    o->collidingCapacity = o->collidingCapacity ? o->collidingCapacity * 2 : 4;
+    o->collidingCapacity = o->collidingCapacity ? o->collidingCapacity + 1 : 1;
     o->collidingWith = (Organism **)realloc(
         o->collidingWith, sizeof(Organism *) * o->collidingCapacity);
   }
@@ -144,7 +156,7 @@ void organism_addColliding(Organism *o, Organism *other) {
 
   if (other->collidingCount >= other->collidingCapacity) {
     other->collidingCapacity =
-        other->collidingCapacity ? other->collidingCapacity * 2 : 4;
+        other->collidingCapacity ? other->collidingCapacity + 1 : 1;
     other->collidingWith = (Organism **)realloc(
         other->collidingWith, sizeof(Organism *) * other->collidingCapacity);
   }

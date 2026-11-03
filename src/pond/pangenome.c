@@ -46,7 +46,7 @@ Genome *pangenome_getGenome(Pangenome *p, Species species) {
   if (species == SPECIES_ALGAE) {
     return &p->algae;
   }
-  pond_log_error("Null genome for species.");
+  log_error("Null genome for species.");
   return NULL;
 }
 

@@ -2,9 +2,9 @@
 #define POND_LOG_H
 
 void pond_log(const char *prefix, const char *message);
-void pond_log_warning(const char *message);
-void pond_log_error(const char *message);
-void pond_log_debug(const char *message);
-void pond_log_info(const char *message);
+void log_warn(const char *message);
+void log_error(const char *message);
+void log_debug(const char *message);
+void log_info(const char *message);
 
 #endif

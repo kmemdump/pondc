@@ -11,7 +11,7 @@ void senses_update(Senses *s, Organism *other) {
   float distanceBetween =
       distanceBetweenCenters - (other->mass + s->self->mass) / 2.0f;
 
-  if (distanceBetween > SENS_DISTANCE) {
+  if (distanceBetween > SENSE_DISTANCE) {
     return;
   }
 

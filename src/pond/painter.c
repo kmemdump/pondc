@@ -4,7 +4,19 @@
 #include "raylib.h"
 #include <string.h>
 
-void painter_init(Painter *p) { memset(p, 0, sizeof(Painter)); }
+void painter_init(Painter *p) {
+  memset(p, 0, sizeof(Painter));
+  // p->drawPostChompGrowth = true;
+  // p->drawDead = true;
+  p->drawPredation = true;
+  // p->drawBaby = true;
+  p->drawOrganism = true;
+  // p->drawBirth = true;
+  // p->drawCollision = true;
+  // p->drawDaddy = true;
+  // p->drawOverlap = true;
+  // p->debugEllipse = true;
+}
 
 Color painter_randomColour(Painter *p) {
   return (Color){(unsigned char)pond_random(0, 255),

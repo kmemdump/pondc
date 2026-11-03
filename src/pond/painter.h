@@ -6,21 +6,21 @@
 typedef struct Painter Painter;
 
 struct Painter {
-    bool blur;
-    bool pretty;
-    bool outline;
-    bool drawOrganism;
-    bool drawBirth;
-    bool drawDaddy;
-    bool drawBaby;
-    bool drawPredation;
-    bool drawDead;
-    bool drawPredator;
-    bool drawPostChompGrowth;
-    bool debugRect;
-    bool debugEllipse;
-    bool drawOverlap;
-    bool drawCollision;
+  bool blur;
+  bool pretty;
+  bool outline;
+  bool drawOrganism;
+  bool drawBirth;
+  bool drawDaddy;
+  bool drawBaby;
+  bool drawPredation;
+  bool drawDead;
+  bool drawPredator;
+  bool drawPostChompGrowth;
+  bool debugRect;
+  bool debugEllipse;
+  bool drawOverlap;
+  bool drawCollision;
 };
 
 void painter_init(Painter *p);

@@ -22,7 +22,7 @@ Motor *motor_create(MotorKind kind, Organism *organism,
 
 void motor_update(Motor *m) {
   if (m->self == NULL) {
-    pond_log_error("Motor has no self.");
+    log_error("Motor has no self.");
     return;
   }
 
