@@ -18,7 +18,7 @@ void population_init(Population *p, Painter *painter) {
 
   for (int i = SPECIES_ALGAE; i < SPECIES_SNAKE + 1; i++) {
     Genome *genome = pangenome_getGenome(&p->pangenome, i);
-    for (int j = 0; j < genome->initCountMax; j++) {
+    for (int j = 0; j <= genome->initCountMax; j++) {
       Vector2 displacement = {pond_random(0, g_width),
                               pond_random(0, g_height)};
       p->organisms[p->organismCount++] =
