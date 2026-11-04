@@ -30,10 +30,10 @@ dasan: $(SRCS)
 	$(CC) $(CDEBUGFLAGS_SANITIZE) $(CFLAGS) $(SRCS) -o $(DASAN_TARGET) $(LDLIBS)
 
 debug_test: debug
-	timeout 5000 ./${TARGET}-debug 2>&1 > ${DEBUG_LOG}
+	timeout 5000 ./${TARGET}-debug &> ${DEBUG_LOG}
 
 dasan_test: dasan
-	timeout 5000 ./${TARGET}-dasan 2>&1 > ${DASAN_LOG}
+	timeout 5000 ./${TARGET}-dasan &> ${DASAN_LOG}
 
 $(TARGET): $(SRCS)
 	mkdir -p $(BUILD_DIR)

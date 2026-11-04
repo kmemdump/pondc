@@ -1,12 +1,13 @@
 #include "pond/senses.h"
 #include "pond/log.h"
+#include "pond/motor.h"
 #include "pond/organism.h"
 #include "pond/types.h"
 #include <stdlib.h>
 
 void senses_update(Senses *s, Organism *other) {
   Vector2 selfToOther =
-      pond_vsub(organism_displacement(other), organism_displacement(s->self));
+      pond_vsub(other->motor->displacement, s->self->motor->displacement);
   float distanceBetweenCenters = pond_vmag(selfToOther);
   float distanceBetween =
       distanceBetweenCenters - (other->mass + s->self->mass) / 2.0f;
@@ -17,11 +18,11 @@ void senses_update(Senses *s, Organism *other) {
 
   if (senses_isAttraction(s, other) &&
       (!s->hasAttraction || s->distanceToAttraction > distanceBetween)) {
-    s->attraction = pond_vcopy(organism_displacement(other));
+    s->attraction = other->motor->displacement;
     s->distanceToAttraction = distanceBetween;
   } else if (senses_isRepulsion(s, other) &&
              (!s->hasRepulsion || s->distanceToRepulsion > distanceBetween)) {
-    s->repulsion = pond_vcopy(organism_displacement(other));
+    s->repulsion = other->motor->displacement;
     s->distanceToRepulsion = distanceBetween;
   }
 }
@@ -37,23 +38,23 @@ void senses_execute(Senses *s) {
 
 void senses_attract(Senses *s) {
   Vector2 selfToAttraction =
-      pond_vsub(s->attraction, organism_displacement(s->self));
+      pond_vsub(s->attraction, s->self->motor->displacement);
   Vector2 direction = pond_vnormalize(selfToAttraction);
   direction = pond_vmult(direction, ATTRACTION_RATE);
-  Vector2 d = organism_displacement(s->self);
+  Vector2 d = s->self->motor->displacement;
   d = pond_vadd(d, direction);
-  organism_setDisplacement(s->self, d);
+  s->self->motor->displacement = d;
   s->hasAttraction = false;
 }
 
 void senses_repulse(Senses *s) {
   Vector2 selfToRepulsion =
-      pond_vsub(s->repulsion, organism_displacement(s->self));
+      pond_vsub(s->repulsion, s->self->motor->displacement);
   Vector2 direction =
       pond_vmult(pond_vnormalize(selfToRepulsion), REPULSION_RATE);
-  Vector2 d = organism_displacement(s->self);
+  Vector2 d = s->self->motor->displacement;
   d = pond_vsub(d, direction);
-  organism_setDisplacement(s->self, d);
+  s->self->motor->displacement = d;
   s->hasRepulsion = false;
 }
 

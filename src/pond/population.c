@@ -1,5 +1,6 @@
 #include "pond/population.h"
 #include "pond/log.h"
+#include "pond/motor.h"
 #include "pond/organism.h"
 #include "pond/types.h"
 #include <stdio.h>
@@ -78,27 +79,25 @@ void population_update(Population *p, Painter *painter) {
   // SET NEW POPULATION: END
 
   int speciesCounts[4] = {0, 0, 0, 0};
-  float mass = 0;
+  p->mass = 0;
 
   for (int i = 0; i < p->organismCount; i++) {
     Organism *organism = p->organisms[i];
-
     organism_show(organism);
     organism_update(organism);
     population_interactWithOthers(p, organism, i);
-
     if (!g_biomassLock) {
       organism_photosynthesise(organism);
     }
 
-    mass += organism->mass;
+    p->mass += organism->mass;
     speciesCounts[organism->genome.species]++;
   }
 
-  g_biomassLock = (mass > BIOMASS_LIMIT);
+  g_biomassLock = p->mass > BIOMASS_LIMIT;
 
   char buf[128];
-  snprintf(buf, sizeof(buf), "Total biomass: %f", mass);
+  snprintf(buf, sizeof(buf), "Total biomass: %f", p->mass);
   log_info(buf);
   snprintf(buf, sizeof(buf), "Population size : %d", p->organismCount);
   log_info(buf);
@@ -147,7 +146,7 @@ void population_remove(Population *p, Organism *organism) {}
 
 bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   Vector2 selfToOther =
-      pond_vsub(organism_displacement(o2), organism_displacement(o1));
+      pond_vsub(o2->motor->displacement, o1->motor->displacement);
   float distanceBetweenCenters = pond_vmag(selfToOther);
   if (distanceBetweenCenters > (o2->mass + o1->mass) / 2.0f) {
     return false;

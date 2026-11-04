@@ -30,15 +30,8 @@ Organism *organism_create(Painter *painter, Genome *genome,
 void organism_update(Organism *o);
 void organism_show(Organism *o);
 void organism_chomp(Organism *o, Organism *other);
-Vector2 organism_displacement(Organism *o);
-void organism_setDisplacement(Organism *o, Vector2 v);
-Vector2 organism_velocity(Organism *o);
-void organism_setVelocity(Organism *o, Vector2 v);
-Vector2 organism_acceleration(Organism *o);
-void organism_setAcceleration(Organism *o, Vector2 v);
 float organism_howFat(Organism *o);
 Organism *organism_makeBaby(Organism *o);
-float organism_timeOffset(Organism *o);
 void organism_photosynthesise(Organism *o);
 float organism_maxMass(Organism *o);
 void organism_sense(Organism *o, Organism *other);

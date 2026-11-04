@@ -16,6 +16,7 @@ struct Appearance {
   Color colour;
   AppearanceKind kind;
   Vector2 *points;
+  float growthRate;
   int pointCount;
   int pointCapacity;
 };

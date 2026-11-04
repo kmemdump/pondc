@@ -46,6 +46,10 @@ void organism_update(Organism *o) {
 }
 
 void organism_show(Organism *o) {
+  if (o == NULL) {
+    log_error("organism_show: Organism is NULL");
+    return;
+  }
   appearance_show(o->appearance);
   painter_show_organism(o->painter, o);
 }
@@ -80,22 +84,6 @@ void organism_chomp(Organism *o, Organism *other) {
   log_debug("organism chomp: complete");
 }
 
-Vector2 organism_displacement(Organism *o) { return o->motor->displacement; }
-
-void organism_setDisplacement(Organism *o, Vector2 v) {
-  o->motor->displacement = v;
-}
-
-Vector2 organism_velocity(Organism *o) { return o->motor->velocity; }
-
-void organism_setVelocity(Organism *o, Vector2 v) { o->motor->velocity = v; }
-
-Vector2 organism_acceleration(Organism *o) { return o->motor->acceleration; }
-
-void organism_setAcceleration(Organism *o, Vector2 v) {
-  o->motor->acceleration = v;
-}
-
 float organism_howFat(Organism *o) {
   return (o->mass - o->startMass) / o->startMass * o->genome.dna.fertility;
 }
@@ -105,11 +93,11 @@ Organism *organism_makeBaby(Organism *o) {
                     o->painter->drawBirth);
 
   Vector2 displacement = pond_vmult(pond_vrandom2D(), o->mass);
-  displacement = pond_vadd(displacement, organism_displacement(o));
+  o->motor->displacement = pond_vadd(displacement, o->motor->displacement);
 
   Organism *baby = organism_create(o->painter, &o->genome, displacement);
   baby->mass = o->mass * o->genome.dna.fissionFactor * ENTROPY;
-  organism_setVelocity(baby, baby->motor->velocity);
+  baby->motor->velocity = o->motor->velocity;
   o->mass = (o->mass - baby->mass / ENTROPY) * ENTROPY;
 
   painter_show_flag(o->painter, o, BLUE,
@@ -119,8 +107,6 @@ Organism *organism_makeBaby(Organism *o) {
 
   return baby;
 }
-
-float organism_timeOffset(Organism *o) { return o->motor->timeOffset; }
 
 void organism_photosynthesise(Organism *o) {
   if (o->genome.dna.photosynthesisIncrement <= 0) {

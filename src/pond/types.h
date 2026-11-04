@@ -42,8 +42,6 @@ extern bool g_biomassLock;
 #define ACCELERATION_GROWTH_FACTOR 0.5f
 #define SLITHER_FACTOR 0.9f
 
-/* PVector stand-ins implemented on top of raylib Vector2. */
-static inline Vector2 pond_vcopy(Vector2 v) { return v; }
 static inline Vector2 pond_vadd(Vector2 a, Vector2 b) {
   return (Vector2){a.x + b.x, a.y + b.y};
 }

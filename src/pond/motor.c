@@ -11,11 +11,11 @@ Motor *motor_create(MotorKind kind, Organism *organism,
   m->self = organism;
   m->displacement = startDisplacement;
   m->velocity = startVelocity;
-  m->acceleration = pond_vcopy((Vector2){0.0f, 0.0f});
+  m->acceleration = (Vector2){0.0f, 0.0f};
   m->timeOffset = pond_random(0.0f, CLOCK_MAX);
   m->kind = kind;
-  m->velocityPropagation = pond_vcopy(startVelocity);
-  m->velocityNormal = pond_vcopy(startVelocity);
+  m->velocityPropagation = startVelocity;
+  m->velocityNormal = startVelocity;
   m->algaeBeSlow = 0.2f;
   return m;
 }
@@ -39,27 +39,29 @@ void motor_update(Motor *m) {
 }
 
 void motor_move(Motor *m) {
-  motor_updateAcceleration(m);
-  motor_updateVelocity(m);
-  motor_updateDisplacement(m);
-}
+  // Update acceleration
+  Vector2 accelerationStep = (Vector2){0.0f, 0.0f};
+  accelerationStep = pond_vadd(
+      accelerationStep,
+      pond_vmult(pond_vrandom2D(), ACCELERATION_NOISE_FACTOR * 12.0f *
+                                       sinf(g_clock + m->timeOffset)));
+  accelerationStep = pond_vdiv(accelerationStep, powf(motor_mass(m), 3));
+  Vector2 acceleration =
+      pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.5f);
+  acceleration = pond_vadd(acceleration, accelerationStep);
+  m->acceleration = acceleration;
 
-void motor_updateDisplacement(Motor *m) {
-  Vector2 d = organism_displacement(m->self);
-  d = pond_vadd(d, m->velocity);
-  organism_setDisplacement(m->self, d);
-}
-
-void motor_updateVelocity(Motor *m) {
-  Vector2 v = organism_velocity(m->self);
-  v = pond_vadd(v, organism_acceleration(m->self));
-  float mag = pond_vmag(v);
+  if (m->kind == MOTOR_KIND_ALGAE) {
+    motor_updateAccelerationAlgae(m);
+  }
+  // Update velocity
+  Vector2 velocity = m->velocity;
+  velocity = pond_vadd(velocity, m->acceleration);
+  float mag = pond_vmag(velocity);
   if (mag > TERMINAL_VELOCITY) {
-    v = pond_vdiv(v, mag / TERMINAL_VELOCITY);
-    organism_setVelocity(m->self, v);
+    m->velocity = pond_vdiv(velocity, mag / TERMINAL_VELOCITY);
   } else if (mag < STAGNANT_VELOCITY) {
-    v = pond_vmult(v, STAGNANT_VELOCITY / mag);
-    organism_setVelocity(m->self, v);
+    m->velocity = pond_vmult(velocity, STAGNANT_VELOCITY / mag);
   }
 
   if (m->kind == MOTOR_KIND_SNAKE) {
@@ -67,12 +69,13 @@ void motor_updateVelocity(Motor *m) {
   } else if (m->kind == MOTOR_KIND_ALGAE) {
     motor_updateVelocityAlgae(m);
   }
+  // Update displacement
+  m->displacement = pond_vadd(m->displacement, m->velocity);
 }
 
 void motor_updateVelocitySnake(Motor *m) {
-  Vector2 velocityPropagation = organism_velocity(m->self);
-  velocityPropagation =
-      pond_vadd(velocityPropagation, organism_acceleration(m->self));
+  Vector2 velocityPropagation = m->velocity;
+  velocityPropagation = pond_vadd(velocityPropagation, m->acceleration);
   m->velocityPropagation = velocityPropagation;
 
   Vector2 rotated = (Vector2){-m->velocityNormal.y, m->velocityNormal.x};
@@ -90,50 +93,33 @@ void motor_updateVelocitySnake(Motor *m) {
 }
 
 void motor_updateVelocityAlgae(Motor *m) {
-  Vector2 v = organism_velocity(m->self);
-  v = pond_vadd(v, organism_acceleration(m->self));
+  Vector2 v = m->velocity;
+  v = pond_vadd(v, m->acceleration);
 
   float mag = pond_vmag(v);
   if (mag == 0.0f) {
     return;
   }
 
-  float algaeBeSlow = 0.2f;
+  float algaeBeSlow = 0.1f;
 
   if (mag > TERMINAL_VELOCITY * algaeBeSlow) {
-    v = pond_vdiv(v, mag / (TERMINAL_VELOCITY * algaeBeSlow));
-    organism_setVelocity(m->self, v);
+    m->velocity = pond_vdiv(v, mag / (TERMINAL_VELOCITY * algaeBeSlow));
   } else if (mag < STAGNANT_VELOCITY * algaeBeSlow) {
-    v = pond_vmult(v, (STAGNANT_VELOCITY * algaeBeSlow) / mag);
-    organism_setVelocity(m->self, v);
+    m->velocity = pond_vmult(v, (STAGNANT_VELOCITY * algaeBeSlow) / mag);
   }
 }
 
-void motor_updateAcceleration(Motor *m) {
-  Vector2 accelerationStep = pond_vcopy((Vector2){0.0f, 0.0f});
-  accelerationStep = pond_vadd(
-      accelerationStep,
-      pond_vmult(pond_vrandom2D(), ACCELERATION_NOISE_FACTOR * 12.0f *
-                                       sinf(g_clock + m->timeOffset)));
-  accelerationStep = pond_vdiv(accelerationStep, powf(motor_mass(m), 3));
-  Vector2 acceleration =
-      pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.5f);
-  acceleration = pond_vadd(acceleration, accelerationStep);
-  organism_setAcceleration(m->self, acceleration);
-
-  if (m->kind == MOTOR_KIND_ALGAE) {
-    motor_updateAccelerationAlgae(m);
-  }
-}
+void motor_updateAcceleration(Motor *m) {}
 
 void motor_updateAccelerationAlgae(Motor *m) {
-  Vector2 accelerationStep = pond_vcopy(organism_acceleration(m->self));
+  Vector2 accelerationStep = m->acceleration;
   accelerationStep = pond_vmult(accelerationStep, -1.0f);
   accelerationStep = pond_vdiv(accelerationStep, powf(motor_mass(m), 3));
   Vector2 acceleration =
       pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.1f);
   acceleration = pond_vadd(acceleration, accelerationStep);
-  organism_setAcceleration(m->self, acceleration);
+  m->acceleration = acceleration;
 }
 
 float motor_clamp(Motor *m, float input, float lowerLimit, float upperLimit) {
@@ -209,16 +195,13 @@ void motor_bounceIfOrganismCollision(Motor *m) {
 }
 
 void motor_moveOutOfOverlap(Motor *m, Organism *other) {
-  Vector2 selfToOther =
-      pond_vsub(organism_displacement(other), organism_displacement(m->self));
+  Vector2 selfToOther = pond_vsub(other->motor->displacement, m->displacement);
   Vector2 xUnitVector = pond_vnormalize(selfToOther);
 
   Vector2 selfRightEdgePoint =
-      pond_vadd(organism_displacement(m->self),
-                pond_vmult(xUnitVector, m->self->mass / 2.0f));
-  Vector2 otherLeftEdgePoint =
-      pond_vsub(organism_displacement(other),
-                pond_vmult(xUnitVector, other->mass / 2.0f));
+      pond_vadd(m->displacement, pond_vmult(xUnitVector, m->self->mass / 2.0f));
+  Vector2 otherLeftEdgePoint = pond_vsub(
+      other->motor->displacement, pond_vmult(xUnitVector, other->mass / 2.0f));
   Vector2 otherLeftEdgeToSelfRightEdge =
       pond_vsub(selfRightEdgePoint, otherLeftEdgePoint);
 
@@ -228,45 +211,42 @@ void motor_moveOutOfOverlap(Motor *m, Organism *other) {
   selfWeight /= totalWeight;
   otherWeight /= totalWeight;
 
-  Vector2 newSelfDisplacement =
-      pond_vsub(organism_displacement(m->self),
-                pond_vmult(otherLeftEdgeToSelfRightEdge, selfWeight));
-  organism_setDisplacement(m->self, newSelfDisplacement);
+  Vector2 newSelfDisplacement = pond_vsub(
+      m->displacement, pond_vmult(otherLeftEdgeToSelfRightEdge, selfWeight));
+  m->displacement = newSelfDisplacement;
   Vector2 newOtherDisplacement =
-      pond_vadd(organism_displacement(other),
+      pond_vadd(other->motor->displacement,
                 pond_vmult(otherLeftEdgeToSelfRightEdge, otherWeight));
-  organism_setDisplacement(other, newOtherDisplacement);
+  other->motor->displacement = newOtherDisplacement;
 }
 
 void motor_bounceAgainstOther(Motor *m, Organism *other) {
   Vector2 otherToSelfVector =
-      pond_vsub(organism_displacement(m->self), organism_displacement(other));
+      pond_vsub(m->displacement, other->motor->displacement);
   Vector2 otherToSelfUnitVector = pond_vnormalize(otherToSelfVector);
 
   if (m->self->painter && m->self->painter->drawCollision) {
     // debug collision lines
   }
 
-  Vector2 newVelocity = pond_vcopy(otherToSelfUnitVector);
+  Vector2 newVelocity = otherToSelfUnitVector;
   newVelocity = pond_vmult(newVelocity, (other->mass * 2.0f) /
                                             (other->mass + motor_mass(m)));
-  newVelocity =
-      pond_vmult(newVelocity, pond_vdot(otherToSelfUnitVector,
-                                        pond_vsub(organism_velocity(m->self),
-                                                  organism_velocity(other))));
-  Vector2 newMVelocity = pond_vsub(organism_velocity(m->self), newVelocity);
-  organism_setVelocity(m->self, newMVelocity);
+  newVelocity = pond_vmult(
+      newVelocity, pond_vdot(otherToSelfUnitVector,
+                             pond_vsub(m->velocity, other->motor->velocity)));
+  Vector2 newMVelocity = pond_vsub(m->velocity, newVelocity);
+  m->velocity = newMVelocity;
 
   Vector2 selfToOtherUnitVector = pond_vmult(otherToSelfUnitVector, -1.0f);
   Vector2 newOtherVelocity =
       pond_vmult(selfToOtherUnitVector,
                  (motor_mass(m) * 2.0f) / (other->mass + motor_mass(m)));
-  newOtherVelocity = pond_vmult(
-      newOtherVelocity,
-      pond_vdot(selfToOtherUnitVector, pond_vsub(organism_velocity(other),
-                                                 organism_velocity(m->self))));
-  Vector2 newOVelocity = pond_vsub(organism_velocity(other), newOtherVelocity);
-  organism_setVelocity(other, newOVelocity);
+  newOtherVelocity =
+      pond_vmult(newOtherVelocity,
+                 pond_vdot(selfToOtherUnitVector,
+                           pond_vsub(other->motor->velocity, m->velocity)));
+  other->motor->velocity = pond_vsub(other->motor->velocity, newOtherVelocity);
 
   if (m->kind == MOTOR_KIND_ALGAE && other->genome.species == SPECIES_ALGAE) {
     motor_agglutinate(m, other);
@@ -274,27 +254,21 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
 }
 
 void motor_agglutinate(Motor *m, Organism *other) {
-  Vector2 velocityCopy = organism_velocity(m->self);
-  Vector2 accelerationCopy = organism_acceleration(m->self);
+  Vector2 velocityCopy = m->velocity;
+  Vector2 accelerationCopy = m->acceleration;
 
-  Vector2 newVelocity =
-      pond_vadd(organism_velocity(m->self), organism_velocity(other));
-  newVelocity = pond_vmult(newVelocity, 0.5f);
-  organism_setVelocity(m->self, newVelocity);
-
+  Vector2 newVelocity = pond_vadd(m->velocity, other->motor->velocity);
+  m->velocity = pond_vmult(newVelocity, 0.5f);
   Vector2 newAcceleration =
-      pond_vadd(organism_acceleration(m->self), organism_acceleration(other));
-  newAcceleration = pond_vmult(newAcceleration, 0.5f);
-  organism_setAcceleration(m->self, newAcceleration);
-
-  Vector2 newOtherVelocity = pond_vadd(organism_velocity(other), velocityCopy);
+      pond_vadd(m->acceleration, other->motor->acceleration);
+  m->acceleration = pond_vmult(newAcceleration, 0.5f);
+  Vector2 newOtherVelocity = pond_vadd(other->motor->velocity, velocityCopy);
   newOtherVelocity = pond_vmult(newOtherVelocity, 0.5f);
-  organism_setVelocity(other, newOtherVelocity);
+  other->motor->velocity = newOtherVelocity;
 
   Vector2 newOtherAcceleration =
-      pond_vadd(organism_acceleration(other), accelerationCopy);
-  newOtherAcceleration = pond_vmult(newOtherAcceleration, 0.5f);
-  organism_setAcceleration(other, newOtherAcceleration);
+      pond_vadd(other->motor->acceleration, accelerationCopy);
+  other->motor->acceleration = pond_vmult(newOtherAcceleration, 0.5f);
 
   if (m->self->painter && m->self->painter->drawCollision) {
     // debug collision lines

@@ -4,31 +4,29 @@
 #include "pond/types.h"
 
 typedef enum MotorKind {
-    MOTOR_KIND_BASE = 0,
-    MOTOR_KIND_SNAKE,
-    MOTOR_KIND_FISH,
-    MOTOR_KIND_ALGAE
+  MOTOR_KIND_BASE = 0,
+  MOTOR_KIND_SNAKE,
+  MOTOR_KIND_FISH,
+  MOTOR_KIND_ALGAE
 } MotorKind;
 
 typedef struct Motor Motor;
 struct Motor {
-    Organism *self;
-    Vector2 displacement;
-    Vector2 velocity;
-    Vector2 acceleration;
-    float timeOffset;
-    MotorKind kind;
-    Vector2 velocityPropagation;
-    Vector2 velocityNormal;
-    float algaeBeSlow;
+  Organism *self;
+  Vector2 displacement;
+  Vector2 velocity;
+  Vector2 acceleration;
+  float timeOffset;
+  MotorKind kind;
+  Vector2 velocityPropagation;
+  Vector2 velocityNormal;
+  float algaeBeSlow;
 };
 
-Motor *motor_create(MotorKind kind, Organism *organism, Vector2 startDisplacement, Vector2 startVelocity);
+Motor *motor_create(MotorKind kind, Organism *organism,
+                    Vector2 startDisplacement, Vector2 startVelocity);
 void motor_update(Motor *m);
 void motor_move(Motor *m);
-void motor_updateDisplacement(Motor *m);
-void motor_updateVelocity(Motor *m);
-void motor_updateAcceleration(Motor *m);
 float motor_clamp(Motor *m, float input, float lowerLimit, float upperLimit);
 void motor_clampToWall(Motor *m);
 void motor_bounceIfWallCollision(Motor *m);
