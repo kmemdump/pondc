@@ -26,7 +26,8 @@ void signal_action_handler(int sig) {
 }
 
 int main(void) {
-  log_file_descriptor = open("app.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+  log_file_descriptor =
+      open("./logs/sigsev.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
   if (log_file_descriptor == -1) {
     perror("Failed to open log file; app.log");
     return 1;
