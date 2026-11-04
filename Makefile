@@ -31,11 +31,9 @@ dasan: $(SRCS)
 
 debug_test: debug
 	timeout 5000 ./${TARGET}-debug 2>&1 > ${DEBUG_LOG}
-	cat ${DEBUG_LOG}
 
 dasan_test: dasan
 	timeout 5000 ./${TARGET}-dasan 2>&1 > ${DASAN_LOG}
-	cat ${DASAN_LOG}
 
 $(TARGET): $(SRCS)
 	mkdir -p $(BUILD_DIR)

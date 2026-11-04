@@ -34,9 +34,7 @@ void population_update(Population *p, Painter *painter) {
   // CLEAN UP THE DEAD: START
   int theDeadCount = 0;
   for (int i = 0; i < p->organismCount; i++) {
-    if (p->organisms[i]->isDead) {
-      theDeadCount++;
-    }
+    theDeadCount += p->organisms[i]->isDead;
   }
 
   int theAliveCount = p->organismCount - theDeadCount;
@@ -51,21 +49,14 @@ void population_update(Population *p, Painter *painter) {
   // CLEAN UP THE DEAD: END
 
   // MAKE SOME BABIES: START
+  Organism **theBabies =
+      (Organism **)malloc(sizeof(Organism *) * theAliveCount);
   int theBabyCount = 0;
-  for (int i = 0, j = 0; i < theAliveCount; i++) {
+  for (int i = 0; i < theAliveCount; i++) {
     Organism *organism = theAlive[i];
     float howFat = organism_howFat(organism);
     if (howFat > 0 && pond_random(0, 1) < howFat) {
-      theBabyCount++;
-    }
-  }
-
-  Organism **theBabies = (Organism **)malloc(sizeof(Organism *) * theBabyCount);
-  for (int i = 0, j = 0; i < theAliveCount; i++) {
-    Organism *organism = theAlive[i];
-    float howFat = organism_howFat(organism);
-    if (howFat > 0 && pond_random(0, 1) < howFat) {
-      theBabies[j++] = organism_makeBaby(organism);
+      theBabies[theBabyCount++] = organism_makeBaby(organism);
     }
   }
   // MAKE SOME BABIES: END

@@ -22,7 +22,6 @@ void pond_init(Pond *p, int width, int height) {
 
   g_width = width;
   g_height = height;
-  g_biomassLock = false;
 
   painter_init(&p->painter);
   pangenome_init(&p->population.pangenome);
