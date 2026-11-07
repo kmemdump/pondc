@@ -6,7 +6,6 @@
 #include "raylib.h"
 #include "rlgl.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 static void updatePoints(Appearance *appearance) {
@@ -14,22 +13,17 @@ static void updatePoints(Appearance *appearance) {
   assert(organism->mass);
   int newPointCount = (int)(organism->mass / appearance->growthRate) + 2;
 
-  char buf[128];
-  snprintf(buf, sizeof(buf), "newPointCount: %d, mass: %.1f, growthRate : %.1f",
-           newPointCount, organism->mass, appearance->growthRate);
-  log_debug(buf);
-
   appearance->points[0] = organism->motor->displacement;
 
   int currentPointCount = appearance->pointCount;
-  for (int i = currentPointCount; i > 0; i--) {
+  for (int i = currentPointCount - 1; i > 0; i--) {
     appearance->points[i] = appearance->points[i - 1];
   }
 
   appearance->points =
       realloc(appearance->points, sizeof(Vector2) * newPointCount);
   appearance->pointCount = newPointCount;
-  for (int i = currentPointCount + 1; i < newPointCount; i++) {
+  for (int i = currentPointCount; i < newPointCount; i++) {
     appearance->points[i] = appearance->points[currentPointCount];
   }
 }

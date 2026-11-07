@@ -13,8 +13,8 @@
 #define FISH_COUNT_INIT 6
 #define ALGAE_COUNT_INIT 1000
 
-const float GROWTH_RATE_SNAKE = 0.2;
-const float GROWTH_RATE_FISH = 0.3;
+const float GROWTH_RATE_SNAKE = 0.3;
+const float GROWTH_RATE_FISH = 0.4;
 
 void pangenome_init(Pangenome *p) {
   p->snake.species = SPECIES_SNAKE;

@@ -54,15 +54,6 @@ void organism_show(Organism *o) {
 }
 
 void organism_chomp(Organism *o, Organism *other) {
-  char buf[128];
-  snprintf(buf, sizeof(buf), "organism_chomp: Prey species: %d",
-           organism_species(other));
-  log_debug(buf);
-
-  snprintf(buf, sizeof(buf), "organism_chomp: Predator species: %d",
-           organism_species(o));
-  log_debug(buf);
-
   o->mass = (o->mass + other->mass) * ENTROPY;
   other->isDead = true;
 
@@ -71,8 +62,6 @@ void organism_chomp(Organism *o, Organism *other) {
   painter_debugOrganism(o, RED);
   o->mass = o->mass + other->mass;
   painter_debugOrganism(other, MAROON);
-
-  log_debug("organism chomp: complete");
 }
 
 float organism_howFat(Organism *o) {
