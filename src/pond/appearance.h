@@ -21,8 +21,6 @@ struct Appearance {
   int pointCapacity;
 };
 
-Appearance *appearance_create(Organism *organism, Color colour,
-                              AppearanceKind kind);
 void appearance_show(Appearance *appearance);
 void appearance_free(Appearance *appearance);
 

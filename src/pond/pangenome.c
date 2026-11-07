@@ -2,6 +2,7 @@
 #include "pond/appearance.h"
 #include "pond/log.h"
 #include "pond/motor.h"
+#include "pond/organism.h"
 #include "pond/senses.h"
 #include "pond/types.h"
 #include <assert.h>
@@ -11,6 +12,9 @@
 #define SNAKE_COUNT_INIT 2
 #define FISH_COUNT_INIT 6
 #define ALGAE_COUNT_INIT 1000
+
+const float GROWTH_RATE_SNAKE = 0.2;
+const float GROWTH_RATE_FISH = 0.3;
 
 void pangenome_init(Pangenome *p) {
   p->snake.species = SPECIES_SNAKE;
@@ -129,6 +133,26 @@ Appearance *genome_createAppearance(Genome *g, Organism *organism,
     appearance->kind = APPEARANCE_KIND_FISH;
   } else if (g->species == SPECIES_ALGAE) {
     appearance->kind = APPEARANCE_KIND_ALGAE;
+  }
+
+  if (appearance->kind == APPEARANCE_KIND_FISH ||
+      appearance->kind == APPEARANCE_KIND_SNAKE) {
+    appearance->growthRate = (appearance->kind == APPEARANCE_KIND_FISH)
+                                 ? GROWTH_RATE_FISH
+                                 : GROWTH_RATE_SNAKE;
+    appearance->pointCapacity =
+        (int)(organism->mass / appearance->growthRate) + 2;
+    appearance->points =
+        (Vector2 *)malloc(sizeof(Vector2) * appearance->pointCapacity);
+    float i = 0;
+    while (i <= organism->mass) {
+      appearance->points[appearance->pointCount].x =
+          organism->motor->displacement.x;
+      appearance->points[appearance->pointCount].y =
+          organism->motor->displacement.y;
+      appearance->pointCount++;
+      i += appearance->growthRate;
+    }
   }
   return appearance;
 }

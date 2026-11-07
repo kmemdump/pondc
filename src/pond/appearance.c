@@ -9,33 +9,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Appearance *appearance_create(Organism *organism, Color colour,
-                              AppearanceKind kind) {
-  Appearance *a = (Appearance *)calloc(1, sizeof(Appearance));
-  a->organism = organism;
-  a->colour = colour;
-  a->kind = kind;
-
-  if (kind == APPEARANCE_KIND_FISH || kind == APPEARANCE_KIND_SNAKE) {
-    a->growthRate = (kind == APPEARANCE_KIND_FISH) ? 0.3 : 0.2;
-    a->pointCapacity = (int)(organism->mass / a->growthRate) + 2;
-    a->points = (Vector2 *)malloc(sizeof(Vector2) * a->pointCapacity);
-    float i = 0;
-    while (i <= organism->mass) {
-      a->points[a->pointCount].x = organism->motor->displacement.x;
-      a->points[a->pointCount].y = organism->motor->displacement.y;
-      a->pointCount++;
-      i += a->growthRate;
-    }
-  }
-
-  return a;
-}
-
 static void updatePoints(Appearance *appearance) {
   Organism *organism = appearance->organism;
-  assert((int)organism->mass);
+  assert(organism->mass);
   int newPointCount = (int)(organism->mass / appearance->growthRate) + 2;
+
+  char buf[128];
+  snprintf(buf, sizeof(buf), "newPointCount: %d, mass: %.1f, growthRate : %.1f",
+           newPointCount, organism->mass, appearance->growthRate);
+  log_debug(buf);
+
   appearance->points[0] = organism->motor->displacement;
 
   int currentPointCount = appearance->pointCount;
@@ -43,9 +26,6 @@ static void updatePoints(Appearance *appearance) {
     appearance->points[i] = appearance->points[i - 1];
   }
 
-  char buf[128];
-  snprintf(buf, sizeof(buf), "newPointCount: %d", newPointCount);
-  log_debug(buf);
   appearance->points =
       realloc(appearance->points, sizeof(Vector2) * newPointCount);
   appearance->pointCount = newPointCount;
