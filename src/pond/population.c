@@ -26,10 +26,6 @@ void population_init(Population *p) {
   }
 }
 
-Vector2 population_randomDisplacement(Population *p) {
-  return (Vector2){pond_random(0, g_width), pond_random(0, g_height)};
-}
-
 void population_update(Population *p) {
   // CLEAN UP THE DEAD: START
   int theDeadCount = 0;

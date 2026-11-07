@@ -33,7 +33,6 @@ void motor_bounceIfWallCollision(Motor *m);
 void motor_bounceIfOrganismCollision(Motor *m);
 void motor_moveOutOfOverlap(Motor *m, Organism *other);
 void motor_bounceAgainstOther(Motor *m, Organism *other);
-
 void motor_updateVelocitySnake(Motor *m);
 void motor_updateVelocityAlgae(Motor *m);
 void motor_updateAccelerationAlgae(Motor *m);

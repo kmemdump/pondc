@@ -15,7 +15,6 @@ struct Population {
 };
 
 void population_init(Population *p);
-Vector2 population_randomDisplacement(Population *p);
 void population_update(Population *p);
 void population_interactWithOthers(Population *p, Organism *organism,
                                    int index);

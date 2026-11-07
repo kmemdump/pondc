@@ -121,7 +121,7 @@ Motor *genome_createMotor(Genome *g, Organism *organism,
 Appearance *genome_createAppearance(Genome *g, Organism *organism,
                                     Color colour) {
   Appearance *appearance = (Appearance *)calloc(1, sizeof(Appearance));
-  appearance->self = organism;
+  appearance->organism = organism;
   appearance->colour = colour;
   appearance->points = (Vector2 *)malloc(100 * sizeof(Vector2));
   if (g->species == SPECIES_SNAKE) {
