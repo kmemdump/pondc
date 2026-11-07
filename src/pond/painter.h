@@ -21,11 +21,15 @@ struct Painter {
   bool debugEllipse;
   bool drawOverlap;
   bool drawCollision;
+
+  Color background;
 };
 
-void painter_init(Painter *p);
-Color painter_randomColour(Painter *p);
-void painter_show_organism(Painter *p, Organism *organism);
-void painter_show_flag(Painter *p, Organism *organism, Color colour, bool flag);
+void painter_init();
+void painter_clearBackground();
+Color painter_randomColour();
+void painter_showOrganism(Organism *organism);
+void painter_debugOrganism(Organism *organism, Color colour);
+void painter_debugCollisions(Organism *organism, Organism *other);
 
 #endif

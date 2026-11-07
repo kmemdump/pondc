@@ -1,7 +1,6 @@
 #ifndef POND_ORGANISM_H
 #define POND_ORGANISM_H
 
-#include "pond/painter.h"
 #include "pond/pangenome.h"
 #include "raylib.h"
 #include <stdbool.h>
@@ -13,7 +12,6 @@ struct Organism {
   Motor *motor;
   Appearance *appearance;
   Senses *senses;
-  Painter *painter;
   float startMass;
   float mass;
   float age;
@@ -25,8 +23,7 @@ struct Organism {
   int collidingCapacity;
 };
 
-Organism *organism_create(Painter *painter, Genome *genome,
-                          Vector2 displacement);
+Organism *organism_create(Genome *genome, Vector2 displacement);
 void organism_update(Organism *o);
 void organism_show(Organism *o);
 void organism_chomp(Organism *o, Organism *other);

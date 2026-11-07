@@ -12,14 +12,14 @@ typedef enum MotorKind {
 
 typedef struct Motor Motor;
 struct Motor {
+  MotorKind kind;
   Organism *self;
   Vector2 displacement;
   Vector2 velocity;
   Vector2 acceleration;
-  float timeOffset;
-  MotorKind kind;
   Vector2 velocityPropagation;
   Vector2 velocityNormal;
+  float timeOffset;
   float algaeBeSlow;
 };
 

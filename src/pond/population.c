@@ -10,7 +10,7 @@
 #define BIOMASS_LIMIT 4000.0f
 #define POPULATION_CAPACITY 100000
 
-void population_init(Population *p, Painter *painter) {
+void population_init(Population *p) {
   p->organismCapacity = POPULATION_CAPACITY;
   p->organisms = (Organism **)malloc(sizeof(Organism *) * p->organismCapacity);
   p->organismCount = 0;
@@ -21,8 +21,7 @@ void population_init(Population *p, Painter *painter) {
     for (int j = 0; j <= genome->initCountMax; j++) {
       Vector2 displacement = {pond_random(0, g_width),
                               pond_random(0, g_height)};
-      p->organisms[p->organismCount++] =
-          organism_create(painter, genome, displacement);
+      p->organisms[p->organismCount++] = organism_create(genome, displacement);
     }
   }
 }
@@ -31,7 +30,7 @@ Vector2 population_randomDisplacement(Population *p) {
   return (Vector2){pond_random(0, g_width), pond_random(0, g_height)};
 }
 
-void population_update(Population *p, Painter *painter) {
+void population_update(Population *p) {
   // CLEAN UP THE DEAD: START
   int theDeadCount = 0;
   for (int i = 0; i < p->organismCount; i++) {
@@ -152,9 +151,8 @@ bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
     return false;
   }
 
-  painter_show_flag(o1->painter, o1, BLACK,
-                    o1->painter->drawOverlap || o1->painter->drawCollision);
-  painter_show_flag(o1->painter, o2, BLACK,
-                    o1->painter->drawOverlap || o1->painter->drawCollision);
+  painter_debugOrganism(o1, BLACK);
+  painter_debugOrganism(o2, BLACK);
+
   return true;
 }

@@ -8,10 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Organism *organism_create(Painter *painter, Genome *genome,
-                          Vector2 displacement) {
+Organism *organism_create(Genome *genome, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
-  o->painter = painter;
   o->genome = *genome;
   genome_createDna(genome);
 
@@ -19,7 +17,7 @@ Organism *organism_create(Painter *painter, Genome *genome,
       pond_random(o->genome.dna.lowerMassLimit, o->genome.dna.upperMassLimit);
   o->mass = o->startMass;
   o->colour = o->genome.dna.colour;
-  o->randomColour = painter_randomColour(painter);
+  o->randomColour = painter_randomColour();
 
   o->motor = genome_createMotor(&o->genome, o, displacement, pond_vrandom2D());
   o->appearance = genome_createAppearance(&o->genome, o, o->genome.dna.colour);
@@ -51,7 +49,7 @@ void organism_show(Organism *o) {
     return;
   }
   appearance_show(o->appearance);
-  painter_show_organism(o->painter, o);
+  painter_showOrganism(o);
 }
 
 void organism_chomp(Organism *o, Organism *other) {
@@ -67,19 +65,11 @@ void organism_chomp(Organism *o, Organism *other) {
   o->mass = (o->mass + other->mass) * ENTROPY;
   other->isDead = true;
 
-  painter_show_flag(o->painter, o, GREEN,
-                    o->painter->drawPredation ||
-                        o->painter->drawPostChompGrowth);
-
+  painter_debugOrganism(o, GREEN);
   o->mass = o->mass - other->mass;
-
-  painter_show_flag(o->painter, o, RED,
-                    o->painter->drawPredation || o->painter->drawPredator);
-
+  painter_debugOrganism(o, RED);
   o->mass = o->mass + other->mass;
-
-  painter_show_flag(o->painter, other, MAROON,
-                    o->painter->drawPredation || o->painter->drawDead);
+  painter_debugOrganism(other, MAROON);
 
   log_debug("organism chomp: complete");
 }
@@ -89,21 +79,19 @@ float organism_howFat(Organism *o) {
 }
 
 Organism *organism_makeBaby(Organism *o) {
-  painter_show_flag(o->painter, o, (Color){0, 255, 255, 255},
-                    o->painter->drawBirth);
+  painter_debugOrganism(o, (Color){0, 255, 255, 255});
 
   Vector2 displacement = pond_vmult(pond_vrandom2D(), o->mass);
   o->motor->displacement = pond_vadd(displacement, o->motor->displacement);
 
-  Organism *baby = organism_create(o->painter, &o->genome, displacement);
+  Organism *baby = organism_create(&o->genome, displacement);
   baby->mass = o->mass * o->genome.dna.fissionFactor * ENTROPY;
   baby->motor->velocity = o->motor->velocity;
   o->mass = (o->mass - baby->mass / ENTROPY) * ENTROPY;
 
-  painter_show_flag(o->painter, o, BLUE,
-                    o->painter->drawBirth || o->painter->drawDaddy);
-  painter_show_flag(o->painter, baby, GREEN,
-                    o->painter->drawBirth || o->painter->drawBaby);
+  painter_showOrganism(baby);
+  painter_debugOrganism(o, BLUE);
+  painter_debugOrganism(baby, GREEN);
 
   return baby;
 }

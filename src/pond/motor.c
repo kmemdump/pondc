@@ -1,7 +1,9 @@
 #include "pond/motor.h"
 #include "pond/log.h"
 #include "pond/organism.h"
+#include "pond/painter.h"
 #include "pond/types.h"
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 
@@ -21,10 +23,7 @@ Motor *motor_create(MotorKind kind, Organism *organism,
 }
 
 void motor_update(Motor *m) {
-  if (m->self == NULL) {
-    log_error("Motor has no self.");
-    return;
-  }
+  assert(m->self != NULL);
 
   motor_bounceIfOrganismCollision(m);
 
@@ -225,9 +224,7 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
       pond_vsub(m->displacement, other->motor->displacement);
   Vector2 otherToSelfUnitVector = pond_vnormalize(otherToSelfVector);
 
-  if (m->self->painter && m->self->painter->drawCollision) {
-    // debug collision lines
-  }
+  painter_debugCollisions(m->self, other);
 
   Vector2 newVelocity = otherToSelfUnitVector;
   newVelocity = pond_vmult(newVelocity, (other->mass * 2.0f) /
@@ -256,7 +253,6 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
 void motor_agglutinate(Motor *m, Organism *other) {
   Vector2 velocityCopy = m->velocity;
   Vector2 accelerationCopy = m->acceleration;
-
   Vector2 newVelocity = pond_vadd(m->velocity, other->motor->velocity);
   m->velocity = pond_vmult(newVelocity, 0.5f);
   Vector2 newAcceleration =
@@ -270,9 +266,8 @@ void motor_agglutinate(Motor *m, Organism *other) {
       pond_vadd(other->motor->acceleration, accelerationCopy);
   other->motor->acceleration = pond_vmult(newOtherAcceleration, 0.5f);
 
-  if (m->self->painter && m->self->painter->drawCollision) {
-    // debug collision lines
-  }
+  painter_debugCollisions(m->self, other);
 }
 
+// TODO: Remove this function
 float motor_mass(Motor *m) { return m->self ? m->self->mass : 0.0f; }

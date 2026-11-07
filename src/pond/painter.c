@@ -3,55 +3,59 @@
 #include "pond/organism.h"
 #include "pond/types.h"
 #include "raylib.h"
-#include <string.h>
 
-void painter_init(Painter *p) {
-  memset(p, 0, sizeof(Painter));
-  // p->drawPostChompGrowth = true;
-  // p->drawDead = true;
-  p->drawPredation = true;
-  // p->drawBaby = true;
-  p->drawOrganism = true;
-  // p->drawBirth = true;
-  // p->drawCollision = true;
-  // p->drawDaddy = true;
-  // p->drawOverlap = true;
-  // p->debugEllipse = true;
+static Painter painter_instance;
+
+void painter_init() {
+  // painter_instance.drawPostChompGrowth = true;
+  // painter_instance.drawDead = true;
+  painter_instance.drawPredation = true;
+  // painter_instance.drawBaby = true;
+  painter_instance.drawOrganism = true;
+  // painter_instance.drawBirth = true;
+  // painter_instance.drawCollision = true;
+  // painter_instance.drawDaddy = true;
+  // painter_instance.drawOverlap = true;
+  // painter_instance.debugEllipse = true;
+
+  painter_instance.background = WHITE;
 }
 
-Color painter_randomColour(Painter *p) {
+void painter_clearBackground() {
+  if (!painter_instance.blur && !painter_instance.pretty) {
+    ClearBackground(painter_instance.background);
+  }
+}
+
+Color painter_randomColour() {
   return (Color){(unsigned char)pond_random(0, 255),
                  (unsigned char)pond_random(0, 255),
                  (unsigned char)pond_random(0, 255), 255};
 }
 
-void painter_show_organism(Painter *p, Organism *organism) {
-  if (!p->drawOrganism) {
+void painter_showOrganism(Organism *organism) {
+  if (!painter_instance.drawOrganism) {
     return;
   }
 
-  Color colour = p->pretty ? organism->randomColour : organism->colour;
+  Color colour =
+      painter_instance.pretty ? organism->randomColour : organism->colour;
   Color fillColour = colour;
-  fillColour.a = p->blur ? 20 : 200;
+  fillColour.a = painter_instance.blur ? 20 : 200;
 
   Vector2 d = organism->motor->displacement;
   DrawEllipse((int)d.x, (int)d.y, organism->mass / 2.0f, organism->mass / 2.0f,
               fillColour);
 }
 
-void painter_show_flag(Painter *p, Organism *organism, Color colour,
-                       bool flag) {
-  if (!flag) {
-    return;
-  }
-
-  if (p->debugEllipse) {
+void painter_debugOrganism(Organism *organism, Color colour) {
+  if (painter_instance.debugEllipse) {
     Vector2 d = organism->motor->displacement;
     DrawEllipse((int)d.x, (int)d.y, organism->mass / 2.0f,
                 organism->mass / 2.0f, colour);
   }
 
-  if (p->debugRect) {
+  if (painter_instance.debugRect) {
     Vector2 d = organism->motor->displacement;
     Rectangle rect;
     rect.x = d.x - organism->mass / 2.0f;
@@ -59,5 +63,11 @@ void painter_show_flag(Painter *p, Organism *organism, Color colour,
     rect.width = organism->mass;
     rect.height = organism->mass;
     DrawRectangleRec(rect, colour);
+  }
+}
+
+void painter_debugCollisions(Organism *organism, Organism *other) {
+  if (painter_instance.drawCollision) {
+    // debug collision lines
   }
 }

@@ -13,31 +13,28 @@ float g_width = 0;
 float g_height = 0;
 bool g_biomassLock = false;
 
-void pond_init(Pond *p, int width, int height) {
-  p->background = WHITE;
-  p->clock = 0;
-  p->clockMax = CLOCK_MAX;
-  p->clockIncrement = CLOCK_INCREMENT;
-  p->entropy = ENTROPY;
+void pond_init(Pond *pond, int width, int height) {
+  pond->clock = 0;
+  pond->clockMax = CLOCK_MAX;
+  pond->clockIncrement = CLOCK_INCREMENT;
+  pond->entropy = ENTROPY;
 
   g_width = width;
   g_height = height;
 
-  painter_init(&p->painter);
-  pangenome_init(&p->population.pangenome);
-  population_init(&p->population, &p->painter);
+  painter_init();
+  pangenome_init(&pond->population.pangenome);
+  population_init(&pond->population);
 }
 
-void pond_update(Pond *p) {
-  if (!p->painter.blur && !p->painter.pretty) {
-    ClearBackground(p->background);
-  }
-  population_update(&p->population, &p->painter);
-  pond_drawMouse(p);
-  p->clock += p->clockIncrement;
+void pond_update(Pond *pond) {
+  painter_clearBackground();
+  population_update(&pond->population);
+  pond_drawMouse();
+  pond->clock += pond->clockIncrement;
 }
 
-void pond_drawMouse(Pond *p) {
+void pond_drawMouse() {
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
     DrawEllipse(GetMouseX(), GetMouseY(), 25, 25, WHITE);
   }

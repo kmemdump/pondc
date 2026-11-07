@@ -17,7 +17,7 @@ SRCS := src/main.c src/pond/log.c src/pond/pangenome.c src/pond/motor.c src/pond
 
 .PHONY: all build run clean
 
-all: build
+all: build debug dasan
 
 build: $(TARGET)
 

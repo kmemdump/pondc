@@ -23,9 +23,9 @@ struct Dna {
 
 struct Genome {
   Species species;
+  Species diet[2];
   Dna dna;
   int initCountMax;
-  Species diet[2];
   int dietCount;
 };
 

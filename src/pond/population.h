@@ -14,9 +14,9 @@ struct Population {
   float mass;
 };
 
-void population_init(Population *p, Painter *painter);
+void population_init(Population *p);
 Vector2 population_randomDisplacement(Population *p);
-void population_update(Population *p, Painter *painter);
+void population_update(Population *p);
 void population_interactWithOthers(Population *p, Organism *organism,
                                    int index);
 void population_remove(Population *p, Organism *organism);
