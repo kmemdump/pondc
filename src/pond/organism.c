@@ -5,13 +5,14 @@
 #include "pond/painter.h"
 #include "pond/senses.h"
 #include "pond/types.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 Organism *organism_create(Genome *genome, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
   o->genome = *genome;
-  genome_createDna(genome);
+  genome_initDna(&o->genome);
 
   o->startMass =
       pond_random(o->genome.dna.lowerMassLimit, o->genome.dna.upperMassLimit);

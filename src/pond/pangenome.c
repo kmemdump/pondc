@@ -4,6 +4,7 @@
 #include "pond/motor.h"
 #include "pond/senses.h"
 #include "pond/types.h"
+#include <assert.h>
 #include <raylib.h>
 #include <stdlib.h>
 
@@ -61,48 +62,46 @@ bool genome_diet_contains(Genome *g, Species species) {
   return false;
 }
 
-void *genome_createDna(Genome *g) {
-  Dna *dna = (Dna *)calloc(1, sizeof(Dna));
+void genome_initDna(Genome *g) {
+  assert(g->species != SPECIES_NULL);
 
   if (g->species == SPECIES_SNAKE) {
-    dna->colour = MAROON;
-    dna->predatorFactor = 1.5f;
-    dna->fertility = 0.0002f;
-    dna->maxFoodCapacityCoefficient = 3.0f;
-    dna->lowerMassLimit = 20;
-    dna->upperMassLimit = 30;
-    dna->fissionFactor = 0.5f;
-    dna->photosynthesisIncrement = 0;
-    dna->maxAge = 1000;
-    dna->metabolicRate = 0.01f;
-    dna->emaciationQuotient = 1.1f;
+    g->dna.colour = MAROON;
+    g->dna.predatorFactor = 1.5f;
+    g->dna.fertility = 0.0002f;
+    g->dna.maxFoodCapacityCoefficient = 3.0f;
+    g->dna.lowerMassLimit = 20;
+    g->dna.upperMassLimit = 30;
+    g->dna.fissionFactor = 0.5f;
+    g->dna.photosynthesisIncrement = 0;
+    g->dna.maxAge = 1000;
+    g->dna.metabolicRate = 0.01f;
+    g->dna.emaciationQuotient = 1.1f;
   } else if (g->species == SPECIES_FISH) {
-    dna->colour = BLUE;
-    dna->predatorFactor = 0.7f;
-    dna->fertility = 0.002f;
-    dna->maxFoodCapacityCoefficient = 1.8f;
-    dna->lowerMassLimit = 10;
-    dna->upperMassLimit = 15;
-    dna->fissionFactor = 0.3f;
-    dna->photosynthesisIncrement = 0;
-    dna->maxAge = 300;
-    dna->metabolicRate = 0.02f;
-    dna->emaciationQuotient = 5;
+    g->dna.colour = BLUE;
+    g->dna.predatorFactor = 0.7f;
+    g->dna.fertility = 0.002f;
+    g->dna.maxFoodCapacityCoefficient = 1.8f;
+    g->dna.lowerMassLimit = 10;
+    g->dna.upperMassLimit = 15;
+    g->dna.fissionFactor = 0.3f;
+    g->dna.photosynthesisIncrement = 0;
+    g->dna.maxAge = 300;
+    g->dna.metabolicRate = 0.02f;
+    g->dna.emaciationQuotient = 5;
   } else if (g->species == SPECIES_ALGAE) {
-    dna->colour = GREEN;
-    dna->predatorFactor = 0.0f;
-    dna->fertility = 1;
-    dna->maxFoodCapacityCoefficient = 100;
-    dna->lowerMassLimit = 5;
-    dna->upperMassLimit = 5;
-    dna->fissionFactor = 0.5f;
-    dna->photosynthesisIncrement = 0.2f;
-    dna->maxAge = 50000;
-    dna->metabolicRate = 0;
-    dna->emaciationQuotient = 5;
+    g->dna.colour = GREEN;
+    g->dna.predatorFactor = 0.0f;
+    g->dna.fertility = 1;
+    g->dna.maxFoodCapacityCoefficient = 100;
+    g->dna.lowerMassLimit = 5;
+    g->dna.upperMassLimit = 5;
+    g->dna.fissionFactor = 0.5f;
+    g->dna.photosynthesisIncrement = 0.2f;
+    g->dna.maxAge = 50000;
+    g->dna.metabolicRate = 0;
+    g->dna.emaciationQuotient = 5;
   }
-
-  g->dna = *dna;
 }
 
 Motor *genome_createMotor(Genome *g, Organism *organism,

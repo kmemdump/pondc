@@ -5,12 +5,14 @@
 #include "pond/types.h"
 #include "raylib.h"
 #include "rlgl.h"
+#include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 Appearance *appearance_create(Organism *organism, Color colour,
                               AppearanceKind kind) {
   Appearance *a = (Appearance *)calloc(1, sizeof(Appearance));
-  a->self = organism;
+  a->organism = organism;
   a->colour = colour;
   a->kind = kind;
 
@@ -30,84 +32,72 @@ Appearance *appearance_create(Organism *organism, Color colour,
   return a;
 }
 
-void appearance_show(Appearance *a) {
-  if (a == NULL) {
-    log_error("appearance_show: Appearance is NULL");
-    return;
+static void updatePoints(Appearance *appearance) {
+  Organism *organism = appearance->organism;
+  assert((int)organism->mass);
+  int newPointCount = (int)(organism->mass / appearance->growthRate) + 2;
+  appearance->points[0] = organism->motor->displacement;
+
+  int currentPointCount = appearance->pointCount;
+  for (int i = currentPointCount; i > 0; i--) {
+    appearance->points[i] = appearance->points[i - 1];
   }
-  Organism *self = a->self;
 
-  if (a->kind == APPEARANCE_KIND_FISH) {
-    int newPointCount = (int)(self->mass / a->growthRate) + 2;
-    int currentPointCount = a->pointCount;
-    if (currentPointCount >= newPointCount) {
-      currentPointCount--;
-    }
-    if (currentPointCount > newPointCount) {
-      currentPointCount--;
-    }
+  char buf[128];
+  snprintf(buf, sizeof(buf), "newPointCount: %d", newPointCount);
+  log_debug(buf);
+  appearance->points =
+      realloc(appearance->points, sizeof(Vector2) * newPointCount);
+  appearance->pointCount = newPointCount;
+  for (int i = currentPointCount + 1; i < newPointCount; i++) {
+    appearance->points[i] = appearance->points[currentPointCount];
+  }
+}
 
-    for (int i = currentPointCount; i > 0; i--) {
-      a->points[i] = a->points[i - 1];
-    }
-    a->points[0] = self->motor->displacement;
+static void drawTaperedBody(Appearance *appearance) {
+  Organism *organism = appearance->organism;
+  int i = appearance->pointCount - 1;
+  float taper = organism->mass;
+  while (i >= 0 && taper > 0) {
+    Vector2 point = appearance->points[i];
+    float size = organism->mass - taper;
+    DrawEllipse((int)point.x, (int)point.y, size / 2.0f, size / 2.0f,
+                organism->colour);
+    i--;
+    taper -= organism->mass / (float)appearance->pointCount;
+  }
+}
 
-    float r = self->mass / 2.0f;
-    Vector2 lastPoint = a->points[a->pointCount - 1];
+void appearance_show(Appearance *appearance) {
+  assert(appearance);
+  Organism *organism = appearance->organism;
+  if (appearance->kind == APPEARANCE_KIND_FISH) {
+    updatePoints(appearance);
+    drawTaperedBody(appearance);
+
+    float radius = organism->mass / 2.0f;
+    Vector2 lastPoint = appearance->points[appearance->pointCount - 1];
     Vector2 finHeadingVector =
-        pond_vsub(a->points[a->pointCount - 2], lastPoint);
+        pond_vsub(appearance->points[appearance->pointCount - 2], lastPoint);
     float heading = pond_vheading(finHeadingVector);
 
     rlPushMatrix();
     rlTranslatef(lastPoint.x, lastPoint.y, 0.0f);
     rlRotatef(heading, 0.0f, 0.0f, 1.0f);
-    DrawTriangle((Vector2){r, 0.0f}, (Vector2){0.0f, r}, (Vector2){0.0f, -r},
-                 self->colour);
+    DrawTriangle((Vector2){radius, 0.0f}, (Vector2){0.0f, radius},
+                 (Vector2){0.0f, -radius}, organism->colour);
     rlPopMatrix();
+  }
 
-    int i = a->pointCount - 1;
-    float taper = self->mass;
-    while (i >= 0 && taper > 0) {
-      Vector2 point = a->points[i];
-      float size = self->mass - taper;
-      DrawEllipse((int)point.x, (int)point.y, size / 2.0f, size / 2.0f,
-                  self->colour);
-      i--;
-      taper -= self->mass / (float)a->pointCount;
-    }
+  if (appearance->kind == APPEARANCE_KIND_SNAKE) {
+    updatePoints(appearance);
+    drawTaperedBody(appearance);
+  }
 
-  } else if (a->kind == APPEARANCE_KIND_SNAKE) {
-    int newPointCount = (int)(self->mass / a->growthRate) + 2;
-    int currentPointCount = a->pointCount;
-    if (currentPointCount >= newPointCount) {
-      currentPointCount--;
-    }
-    if (currentPointCount > newPointCount) {
-      currentPointCount--;
-    }
-
-    for (int i = currentPointCount; i > 0; i--) {
-      a->points[i] = a->points[i - 1];
-    }
-    a->points[0] = self->motor->displacement;
-
-    int i = a->pointCount - 1;
-    float taper = self->mass;
-    while (i >= 0 && taper > 0) {
-      Vector2 point = a->points[i];
-      float size = self->mass - taper;
-      DrawEllipse((int)point.x, (int)point.y, size / 2.0f, size / 2.0f,
-                  self->colour);
-
-      i--;
-      taper -= self->mass / (float)a->pointCount;
-    }
-  } else {
-
-    float growthRate = 0.3f;
-    Vector2 d = self->motor->displacement;
-    DrawEllipse((int)d.x, (int)d.y, self->mass / 2.0f, self->mass / 2.0f,
-                self->colour);
+  if (appearance->kind == APPEARANCE_KIND_ALGAE) {
+    Vector2 d = organism->motor->displacement;
+    DrawEllipse((int)d.x, (int)d.y, organism->mass / 2.0f,
+                organism->mass / 2.0f, organism->colour);
   }
 }
 

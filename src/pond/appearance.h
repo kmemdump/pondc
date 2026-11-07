@@ -12,7 +12,7 @@ typedef enum AppearanceKind {
 
 typedef struct Appearance Appearance;
 struct Appearance {
-  Organism *self;
+  Organism *organism;
   Color colour;
   AppearanceKind kind;
   Vector2 *points;
@@ -23,7 +23,7 @@ struct Appearance {
 
 Appearance *appearance_create(Organism *organism, Color colour,
                               AppearanceKind kind);
-void appearance_show(Appearance *a);
-void appearance_free(Appearance *a);
+void appearance_show(Appearance *appearance);
+void appearance_free(Appearance *appearance);
 
 #endif

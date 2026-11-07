@@ -39,7 +39,7 @@ struct Pangenome {
 
 void pangenome_init(Pangenome *p);
 Genome *pangenome_getGenome(Pangenome *p, Species species);
-void *genome_createDna(Genome *g);
+void genome_initDna(Genome *g);
 Motor *genome_createMotor(Genome *g, Organism *organism,
                           Vector2 startDisplacement, Vector2 startVelocity);
 Appearance *genome_createAppearance(Genome *g, Organism *organism,
