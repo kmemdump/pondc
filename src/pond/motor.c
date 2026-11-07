@@ -44,7 +44,7 @@ void motor_move(Motor *m) {
       accelerationStep,
       pond_vmult(pond_vrandom2D(), ACCELERATION_NOISE_FACTOR * 12.0f *
                                        sinf(g_clock + m->timeOffset)));
-  accelerationStep = pond_vdiv(accelerationStep, powf(motor_mass(m), 3));
+  accelerationStep = pond_vdiv(accelerationStep, powf(m->self->mass, 3));
   Vector2 acceleration =
       pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.5f);
   acceleration = pond_vadd(acceleration, accelerationStep);
@@ -114,7 +114,7 @@ void motor_updateAcceleration(Motor *m) {}
 void motor_updateAccelerationAlgae(Motor *m) {
   Vector2 accelerationStep = m->acceleration;
   accelerationStep = pond_vmult(accelerationStep, -1.0f);
-  accelerationStep = pond_vdiv(accelerationStep, powf(motor_mass(m), 3));
+  accelerationStep = pond_vdiv(accelerationStep, powf(m->self->mass, 3));
   Vector2 acceleration =
       pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.1f);
   acceleration = pond_vadd(acceleration, accelerationStep);
@@ -228,7 +228,7 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
 
   Vector2 newVelocity = otherToSelfUnitVector;
   newVelocity = pond_vmult(newVelocity, (other->mass * 2.0f) /
-                                            (other->mass + motor_mass(m)));
+                                            (other->mass + m->self->mass));
   newVelocity = pond_vmult(
       newVelocity, pond_vdot(otherToSelfUnitVector,
                              pond_vsub(m->velocity, other->motor->velocity)));
@@ -238,7 +238,7 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
   Vector2 selfToOtherUnitVector = pond_vmult(otherToSelfUnitVector, -1.0f);
   Vector2 newOtherVelocity =
       pond_vmult(selfToOtherUnitVector,
-                 (motor_mass(m) * 2.0f) / (other->mass + motor_mass(m)));
+                 (m->self->mass * 2.0f) / (other->mass + m->self->mass));
   newOtherVelocity =
       pond_vmult(newOtherVelocity,
                  pond_vdot(selfToOtherUnitVector,
@@ -268,6 +268,3 @@ void motor_agglutinate(Motor *m, Organism *other) {
 
   painter_debugCollisions(m->self, other);
 }
-
-// TODO: Remove this function
-float motor_mass(Motor *m) { return m->self ? m->self->mass : 0.0f; }
