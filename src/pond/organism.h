@@ -8,19 +8,21 @@
 typedef struct Organism Organism;
 
 struct Organism {
-  Genome genome;
-  Motor *motor;
-  Appearance *appearance;
-  Senses *senses;
+  bool isDead;
   float startMass;
   float mass;
   float age;
-  Color randomColour;
-  Color colour;
-  bool isDead;
   Organism **collidingWith;
   int collidingCount;
   int collidingCapacity;
+
+  Color colour;
+  Color randomColour;
+
+  Genome *genome;
+  Motor *motor;
+  Appearance *appearance;
+  Senses *senses;
 };
 
 Organism *organism_create(Genome *genome, Vector2 displacement);
@@ -35,5 +37,6 @@ void organism_sense(Organism *o, Organism *other);
 Species organism_species(Organism *o);
 bool organism_canIEat(Organism *o, Organism *other);
 void organism_addColliding(Organism *o, Organism *other);
+void organism_destroy(Organism *organism);
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef POND_POPULATION_H
 #define POND_POPULATION_H
 
-#include "pond/painter.h"
 #include "pond/pangenome.h"
 
 typedef struct Population Population;
@@ -18,7 +17,6 @@ void population_init(Population *p);
 void population_update(Population *p);
 void population_interactWithOthers(Population *p, Organism *organism,
                                    int index);
-void population_remove(Population *p, Organism *organism);
 bool population_areMeeting(Population *p, Organism *o1, Organism *o2);
 
 #endif

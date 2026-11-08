@@ -37,7 +37,7 @@ void population_update(Population *p) {
   Organism **theAlive = (Organism **)malloc(sizeof(Organism *) * theAliveCount);
   for (int i = 0, j = 0; i < p->organismCount; i++) {
     if (p->organisms[i]->isDead) {
-      free(p->organisms[i]);
+      organism_destroy(p->organisms[i]);
     } else {
       theAlive[j++] = p->organisms[i];
     }
@@ -86,7 +86,7 @@ void population_update(Population *p) {
     }
 
     p->mass += organism->mass;
-    speciesCounts[organism->genome.species]++;
+    speciesCounts[organism->genome->species]++;
   }
 
   g_biomassLock = p->mass > BIOMASS_LIMIT;
@@ -136,8 +136,6 @@ void population_interactWithOthers(Population *p, Organism *organism,
     }
   }
 }
-
-void population_remove(Population *p, Organism *organism) {}
 
 bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   Vector2 selfToOther =
