@@ -17,7 +17,7 @@ void painter_init() {
   // painter_instance.drawDaddy = true;
   // painter_instance.drawOverlap = true;
   // painter_instance.debugEllipse = true;
-  painter_instance.debugRect = true;
+  painter_instance.debugRect = false;
 
   painter_instance.background = WHITE;
 }

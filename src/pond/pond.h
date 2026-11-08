@@ -7,7 +7,6 @@ typedef struct Pond {
   float clock;
   float clockMax;
   float clockIncrement;
-  float entropy;
   Population population;
 } Pond;
 

@@ -29,10 +29,6 @@ extern bool g_biomassLock;
 
 #define CLOCK_MAX 360.0f
 #define CLOCK_INCREMENT 0.05f
-#define ENTROPY 0.99f
-#define SENSE_DISTANCE 100.0f
-#define ATTRACTION_RATE 2.0f
-#define REPULSION_RATE 3.0f
 
 static inline Vector2 pond_vadd(Vector2 a, Vector2 b) {
   return (Vector2){a.x + b.x, a.y + b.y};
