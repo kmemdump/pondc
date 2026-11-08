@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #define POPULATION_SIZE 100
-#define BIOMASS_LIMIT 500.0f
+#define BIOMASS_LIMIT 1000.0f
 #define POPULATION_CAPACITY 100000
 
 void population_init(Population *p) {
