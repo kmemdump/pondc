@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
 int log_file_descriptor = -1;
 
 void signal_action_handler(int sig) {
@@ -44,22 +47,22 @@ int main(void) {
     return 1;
   }
 
-  const int screenWidth = 800;
-  const int screenHeight = 600;
-
-  InitWindow(screenWidth, screenHeight, "Pond");
-  g_width = screenWidth;
-  g_height = screenHeight;
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pond");
+  g_width = SCREEN_WIDTH;
+  g_height = SCREEN_HEIGHT;
   g_background = WHITE;
 
   Pond pond;
-  pond_init(&pond, screenWidth, screenHeight);
+  pond_init(&pond, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   SetTargetFPS(60);
-
   while (!WindowShouldClose()) {
     BeginDrawing();
     pond_update(&pond);
+
+    DrawFPS(10, 10);
+    DrawText(TextFormat("frame: %.3f ms", GetFrameTime() * 1000.0f), 10, 30, 20,
+             DARKGRAY);
     EndDrawing();
   }
 

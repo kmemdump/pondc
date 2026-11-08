@@ -5,11 +5,12 @@
 #include "pond/painter.h"
 #include "pond/pangenome.h"
 #include "pond/types.h"
+#include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define POPULATION_SIZE 100
-#define BIOMASS_LIMIT 4000.0f
+#define BIOMASS_LIMIT 500.0f
 #define POPULATION_CAPACITY 100000
 
 void population_init(Population *p) {
@@ -28,6 +29,7 @@ void population_init(Population *p) {
 }
 
 void population_update(Population *p) {
+  double t0 = GetTime();
   // CLEAN UP THE DEAD: START
   int theDeadCount = 0;
   for (int i = 0; i < p->organismCount; i++) {
@@ -49,6 +51,8 @@ void population_update(Population *p) {
   }
   // CLEAN UP THE DEAD: END
 
+  double t1 = GetTime();
+
   // MAKE SOME BABIES: START
   Organism **theBabies =
       (Organism **)malloc(sizeof(Organism *) * theAliveCount);
@@ -61,6 +65,8 @@ void population_update(Population *p) {
     }
   }
   // MAKE SOME BABIES: END
+
+  double t2 = GetTime();
 
   // SET NEW POPULATION: START
   p->organismCount = theBabyCount + theAliveCount;
@@ -80,21 +86,52 @@ void population_update(Population *p) {
   p->organisms = newOrganisms;
   // SET NEW POPULATION: END
 
+  double t3 = GetTime();
+
+  // UPDATE ORGANISMS: START
   int speciesCounts[4] = {0, 0, 0, 0};
   p->mass = 0;
 
+  const int loopTimerCount = 4;
+  float *loopTimes = calloc(sizeof(int), loopTimerCount);
+
   for (int i = 0; i < p->organismCount; i++) {
     Organism *organism = p->organisms[i];
+    double tA = GetTime();
     organism_show(organism);
+    double tB = GetTime();
+    loopTimes[0] += tB - tA;
     organism_update(organism);
+    double tC = GetTime();
+    loopTimes[1] += tC - tB;
     population_interactWithOthers(p, organism, i);
+    double tD = GetTime();
+    loopTimes[2] += tD - tC;
     if (!g_biomassLock) {
       organism_photosynthesise(organism);
     }
+    double tE = GetTime();
+    loopTimes[3] += tE - tD;
 
     p->mass += organism->mass;
     speciesCounts[organism->genome->species]++;
   }
+
+  char b[256];
+  snprintf(b, sizeof(b),
+           "loop: ms show=%.2f update=%.2f interact=%.2f photo=%.2f",
+           loopTimes[0] * 1000, loopTimes[1] * 1000, loopTimes[2] * 1000,
+           loopTimes[3] * 1000);
+  log_debug(b);
+  // UPDATE ORGANISMS: END
+
+  double t4 = GetTime();
+
+  snprintf(b, sizeof(b),
+           "ms dead=%.2f baby=%.2f rebuild=%.2f org loop=%.2f (pop=%d)",
+           (t1 - t0) * 1000, (t2 - t1) * 1000, (t3 - t2) * 1000,
+           (t4 - t3) * 1000, p->organismCount);
+  log_debug(b);
 
   g_biomassLock = p->mass > BIOMASS_LIMIT;
 
@@ -146,9 +183,6 @@ bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   if (distanceBetweenCenters > (o2->mass + o1->mass) / 2.0f) {
     return false;
   }
-
-  painter_debugOrganism(o1, BLACK);
-  painter_debugOrganism(o2, BLACK);
 
   return true;
 }

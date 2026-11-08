@@ -13,7 +13,7 @@ DASAN_TARGET := $(TARGET)-dasan
 LOG_DIR := logs
 DEBUG_LOG := ./${LOG_DIR}/debug.log
 DASAN_LOG := ./${LOG_DIR}/dasan.log
-SRCS := src/main.c src/pond/log.c src/pond/pangenome.c src/pond/motor.c src/pond/senses.c src/pond/appearance.c src/pond/organism.c src/pond/painter.c src/pond/population.c src/pond/pond.c
+SRCS := src/main.c src/pond/log.c src/pond/pangenome.c src/pond/motor.c src/pond/appearance.c src/pond/organism.c src/pond/painter.c src/pond/population.c src/pond/pond.c
 
 .PHONY: all build run clean
 

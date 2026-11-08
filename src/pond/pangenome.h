@@ -40,7 +40,6 @@ Motor *genome_createMotor(Genome *g, Organism *organism,
                           Vector2 startDisplacement, Vector2 startVelocity);
 Appearance *genome_createAppearance(Genome *g, Organism *organism,
                                     Color colour);
-Senses *genome_createSenses(Genome *g, Organism *organism);
 bool genome_diet_contains(Genome *g, Species species);
 void genome_free(Genome *g);
 

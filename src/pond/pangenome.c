@@ -3,7 +3,6 @@
 #include "pond/log.h"
 #include "pond/motor.h"
 #include "pond/organism.h"
-#include "pond/senses.h"
 #include "pond/types.h"
 #include <assert.h>
 #include <raylib.h>
@@ -11,7 +10,7 @@
 
 #define SNAKE_COUNT_INIT 2
 #define FISH_COUNT_INIT 6
-#define ALGAE_COUNT_INIT 1000
+#define ALGAE_COUNT_INIT 100
 
 const float GROWTH_RATE_SNAKE = 0.3;
 const float GROWTH_RATE_FISH = 0.4;
@@ -146,25 +145,6 @@ Appearance *genome_createAppearance(Genome *g, Organism *organism,
     }
   }
   return appearance;
-}
-
-Senses *genome_createSenses(Genome *g, Organism *organism) {
-  Senses *senses = (Senses *)calloc(1, sizeof(Senses));
-  senses->self = organism;
-  if (g->species == SPECIES_SNAKE) {
-    senses->preyCount = 1;
-    senses->prey = (Species *)malloc(sizeof(Species) * senses->preyCount);
-    senses->prey[0] = SPECIES_FISH;
-  } else if (g->species == SPECIES_FISH) {
-    senses->preyCount = 1;
-    senses->prey = (Species *)malloc(sizeof(Species) * senses->preyCount);
-    senses->prey[0] = SPECIES_ALGAE;
-    senses->predatorCount = 1;
-    senses->predators =
-        (Species *)malloc(sizeof(Species) * senses->predatorCount);
-    senses->predators[0] = SPECIES_SNAKE;
-  }
-  return senses;
 }
 
 void genome_free(Genome *g) {

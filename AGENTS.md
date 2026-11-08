@@ -20,7 +20,7 @@
 
 ## Architecture notes
 
-- Simulation modules mirror the Processing classes: `pangenome`, `motor`, `senses`,
+- Simulation modules mirror the Processing classes: `pangenome`, `motor`, 
   `appearance`, `organism`, `painter`, `population`, `pond` (+ `log`, `types`).
 - No inheritance: polymorphism is emulated via kind-tagged structs (`MotorKind`,
   `AppearanceKind`).

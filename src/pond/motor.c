@@ -7,6 +7,13 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define TERMINAL_VELOCITY 1.0f
+#define STAGNANT_VELOCITY 0.5f
+#define COLLISION_DAMPING_FACTOR -0.9f
+#define ACCELERATION_NOISE_FACTOR 15.0f
+#define ACCELERATION_GROWTH_FACTOR 0.45f
+#define SLITHER_FACTOR 1.4f
+
 Motor *motor_create(MotorKind kind, Organism *organism,
                     Vector2 startDisplacement, Vector2 startVelocity) {
   Motor *m = (Motor *)calloc(1, sizeof(Motor));
@@ -25,6 +32,7 @@ Motor *motor_create(MotorKind kind, Organism *organism,
 void motor_update(Motor *m) {
   assert(m->self != NULL);
 
+  // TODO: mxb
   motor_bounceIfOrganismCollision(m);
 
   if (m->kind == MOTOR_KIND_SNAKE) {

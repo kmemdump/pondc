@@ -4,9 +4,9 @@
 #include "pond/motor.h"
 #include "pond/painter.h"
 #include "pond/pangenome.h"
-#include "pond/senses.h"
 #include "pond/types.h"
 #include <assert.h>
+#include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,7 +16,6 @@ Organism *organism_create(Species species, Vector2 displacement) {
   o->genome = genome_create(species);
   o->motor = genome_createMotor(o->genome, o, displacement, pond_vrandom2D());
   o->appearance = genome_createAppearance(o->genome, o, o->genome->dna.colour);
-  o->senses = genome_createSenses(o->genome, o);
 
   o->colour = o->genome->dna.colour;
   o->randomColour = painter_randomColour();
@@ -25,6 +24,26 @@ Organism *organism_create(Species species, Vector2 displacement) {
   o->mass = o->startMass;
 
   return o;
+}
+
+void organism_sensesAttract(Organism *o) {
+  Vector2 selfToAttraction = pond_vsub(o->attraction, o->motor->displacement);
+  Vector2 direction = pond_vnormalize(selfToAttraction);
+  direction = pond_vmult(direction, ATTRACTION_RATE);
+  Vector2 d = o->motor->displacement;
+  d = pond_vadd(d, direction);
+  o->motor->displacement = d;
+  o->hasAttraction = false;
+}
+
+void organism_sensesRepulse(Organism *o) {
+  Vector2 selfToRepulsion = pond_vsub(o->repulsion, o->motor->displacement);
+  Vector2 direction =
+      pond_vmult(pond_vnormalize(selfToRepulsion), REPULSION_RATE);
+  Vector2 d = o->motor->displacement;
+  d = pond_vsub(d, direction);
+  o->motor->displacement = d;
+  o->hasRepulsion = false;
 }
 
 void organism_update(Organism *o) {
@@ -41,7 +60,12 @@ void organism_update(Organism *o) {
   }
 
   motor_update(o->motor);
-  senses_execute(o->senses);
+
+  if (o->hasAttraction) {
+    organism_sensesAttract(o);
+  } else if (o->hasRepulsion) {
+    organism_sensesRepulse(o);
+  }
 }
 
 void organism_show(Organism *o) {
@@ -66,7 +90,7 @@ void organism_chomp(Organism *o, Organism *other) {
   snprintf(buf, sizeof(buf),
            "organism_chomp: Predator species: %d, Prey species: %d",
            o->genome->species, other->genome->species);
-  log_info(buf);
+  log_debug(buf);
 }
 
 float organism_howFat(Organism *o) {
@@ -103,7 +127,25 @@ float organism_maxMass(Organism *o) {
 }
 
 void organism_sense(Organism *o, Organism *other) {
-  senses_update(o->senses, other);
+  Vector2 selfToOther =
+      pond_vsub(other->motor->displacement, o->motor->displacement);
+  float distanceBetweenCenters = pond_vmag(selfToOther);
+  float distanceBetween =
+      distanceBetweenCenters - (other->mass + o->mass) / 2.0f;
+
+  if (distanceBetween > SENSE_DISTANCE) {
+    return;
+  }
+
+  if (organism_canIEat(o, other) &&
+      (!o->hasAttraction || o->distanceToAttraction > distanceBetween)) {
+    o->attraction = other->motor->displacement;
+    o->distanceToAttraction = distanceBetween;
+  } else if (organism_canIEat(other, o) &&
+             (!o->hasRepulsion || o->distanceToRepulsion > distanceBetween)) {
+    o->repulsion = other->motor->displacement;
+    o->distanceToRepulsion = distanceBetween;
+  }
 }
 
 bool organism_canIEat(Organism *o, Organism *other) {
@@ -133,7 +175,6 @@ void organism_addColliding(Organism *o, Organism *other) {
 void organism_free(Organism *organism) {
   free(organism->motor);
   appearance_free(organism->appearance);
-  senses_free(organism->senses);
   genome_free(organism->genome);
   free(organism->collidingWith);
   free(organism);
