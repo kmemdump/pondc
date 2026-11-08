@@ -129,11 +129,6 @@ void population_interactWithOthers(Population *p, Organism *organism,
       continue;
     }
 
-    if (organism_species(organism) == organism_species(other)) {
-      organism_addColliding(organism, other);
-      continue;
-    }
-
     if (organism_canIEat(organism, other)) {
       organism_chomp(organism, other);
     } else if (organism_canIEat(other, organism)) {

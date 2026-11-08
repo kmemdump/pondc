@@ -33,7 +33,6 @@ Organism *organism_makeBaby(Organism *o);
 void organism_photosynthesise(Organism *o);
 float organism_maxMass(Organism *o);
 void organism_sense(Organism *o, Organism *other);
-Species organism_species(Organism *o);
 bool organism_canIEat(Organism *o, Organism *other);
 void organism_addColliding(Organism *o, Organism *other);
 void organism_free(Organism *organism);

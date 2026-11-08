@@ -106,8 +106,6 @@ void organism_sense(Organism *o, Organism *other) {
   senses_update(o->senses, other);
 }
 
-Species organism_species(Organism *o) { return o->genome->species; }
-
 bool organism_canIEat(Organism *o, Organism *other) {
   return (o->mass * o->genome->dna.predatorFactor) > other->mass &&
          !other->isDead &&

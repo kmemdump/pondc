@@ -12,6 +12,11 @@ static void updatePoints(Appearance *appearance) {
   Organism *organism = appearance->organism;
   assert(organism->mass);
   int newPointCount = (int)(organism->mass / appearance->growthRate) + 2;
+  if (newPointCount > appearance->pointCapacity) {
+    appearance->pointCapacity = newPointCount;
+    appearance->points =
+        realloc(appearance->points, sizeof(Vector2) * newPointCount);
+  }
 
   appearance->points[0] = organism->motor->displacement;
 
@@ -20,8 +25,6 @@ static void updatePoints(Appearance *appearance) {
     appearance->points[i] = appearance->points[i - 1];
   }
 
-  appearance->points =
-      realloc(appearance->points, sizeof(Vector2) * newPointCount);
   appearance->pointCount = newPointCount;
   for (int i = currentPointCount; i < newPointCount; i++) {
     appearance->points[i] = appearance->points[currentPointCount];
@@ -48,6 +51,8 @@ void appearance_show(Appearance *appearance) {
   if (appearance->kind == APPEARANCE_KIND_FISH) {
     updatePoints(appearance);
     drawTaperedBody(appearance);
+
+    assert(appearance->pointCount > 1);
 
     float radius = organism->mass / 2.0f;
     Vector2 lastPoint = appearance->points[appearance->pointCount - 1];

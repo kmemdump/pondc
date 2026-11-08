@@ -167,9 +167,7 @@ void motor_bounceIfWallCollisionSnake(Motor *m) {
 }
 
 void motor_bounceIfOrganismCollision(Motor *m) {
-  if (m->self == NULL) {
-    return;
-  }
+  assert(m->self);
   if (m->self->collidingCount == 0) {
     return;
   }
