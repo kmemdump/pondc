@@ -76,7 +76,7 @@ void appearance_show(Appearance *appearance) {
   if (appearance->kind == APPEARANCE_KIND_ALGAE) {
     Vector2 d = organism->motor->displacement;
     DrawEllipse((int)d.x, (int)d.y, organism->mass / 2.0f,
-                organism->mass / 2.0f, organism->colour);
+                organism->mass / 2.0f, organism->randomColour);
   }
 }
 

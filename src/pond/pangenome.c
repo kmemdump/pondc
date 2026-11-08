@@ -14,6 +14,7 @@
 
 const float GROWTH_RATE_SNAKE = 0.3;
 const float GROWTH_RATE_FISH = 0.4;
+const int DEFAULT_POINT_CAPACITY = 100;
 
 void pangenome_init(Pangenome *p) {
   p->speciesInitCountMax = malloc(sizeof(int) * 4);
@@ -136,7 +137,7 @@ Appearance *genome_createAppearance(Genome *g, Organism *organism,
     appearance->growthRate = (appearance->kind == APPEARANCE_KIND_FISH)
                                  ? GROWTH_RATE_FISH
                                  : GROWTH_RATE_SNAKE;
-    appearance->pointCapacity = 100;
+    appearance->pointCapacity = DEFAULT_POINT_CAPACITY;
     appearance->points =
         (Vector2 *)malloc(sizeof(Vector2) * appearance->pointCapacity);
     appearance->pointCount = (int)(organism->mass / appearance->growthRate) + 2;

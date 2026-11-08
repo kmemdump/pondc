@@ -5,12 +5,14 @@
 #include "pond/painter.h"
 #include "pond/pangenome.h"
 #include "pond/types.h"
+#include <assert.h>
+#include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define POPULATION_SIZE 100
-#define BIOMASS_LIMIT 1000.0f
+#define BIOMASS_LIMIT 2000.0f
 #define POPULATION_CAPACITY 100000
 
 void population_init(Population *p) {
@@ -180,6 +182,7 @@ bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   Vector2 selfToOther =
       pond_vsub(o2->motor->displacement, o1->motor->displacement);
   float distanceBetweenCenters = pond_vmag(selfToOther);
+  assert(!isnan(distanceBetweenCenters));
   if (distanceBetweenCenters > (o2->mass + o1->mass) / 2.0f) {
     return false;
   }

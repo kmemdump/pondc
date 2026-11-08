@@ -14,14 +14,13 @@ Organism *organism_create(Species species, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
 
   o->genome = genome_create(species);
-  o->motor = genome_createMotor(o->genome, o, displacement, pond_vrandom2D());
-  o->appearance = genome_createAppearance(o->genome, o, o->genome->dna.colour);
-
-  o->colour = o->genome->dna.colour;
-  o->randomColour = painter_randomColour();
   o->startMass =
       pond_random(o->genome->dna.lowerMassLimit, o->genome->dna.upperMassLimit);
   o->mass = o->startMass;
+  o->colour = o->genome->dna.colour;
+  o->randomColour = painter_randomColour();
+  o->motor = genome_createMotor(o->genome, o, displacement, pond_vrandom2D());
+  o->appearance = genome_createAppearance(o->genome, o, o->genome->dna.colour);
 
   return o;
 }
@@ -81,9 +80,7 @@ void organism_chomp(Organism *o, Organism *other) {
   o->mass = (o->mass + other->mass) * ENTROPY;
   other->isDead = true;
 
-  o->mass = o->mass - other->mass;
   painter_debugOrganism(o, RED);
-  o->mass = o->mass + other->mass;
   painter_debugOrganism(other, GREEN);
 
   char buf[128];

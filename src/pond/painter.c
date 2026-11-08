@@ -10,13 +10,14 @@ void painter_init() {
   // painter_instance.drawPostChompGrowth = true;
   // painter_instance.drawDead = true;
   painter_instance.drawPredation = true;
-  // painter_instance.drawBaby = true;
   painter_instance.drawOrganism = true;
+  // painter_instance.drawBaby = true;
   // painter_instance.drawBirth = true;
   // painter_instance.drawCollision = true;
   // painter_instance.drawDaddy = true;
   // painter_instance.drawOverlap = true;
   // painter_instance.debugEllipse = true;
+  painter_instance.debugRect = true;
 
   painter_instance.background = WHITE;
 }

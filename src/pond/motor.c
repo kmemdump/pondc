@@ -122,6 +122,7 @@ void motor_updateAcceleration(Motor *m) {}
 void motor_updateAccelerationAlgae(Motor *m) {
   Vector2 accelerationStep = m->acceleration;
   accelerationStep = pond_vmult(accelerationStep, -1.0f);
+  assert(m->self->mass > 1);
   accelerationStep = pond_vdiv(accelerationStep, powf(m->self->mass, 3));
   Vector2 acceleration =
       pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.1f);
