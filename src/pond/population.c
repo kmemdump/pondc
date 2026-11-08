@@ -2,6 +2,7 @@
 #include "pond/log.h"
 #include "pond/motor.h"
 #include "pond/organism.h"
+#include "pond/painter.h"
 #include "pond/types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,11 +18,10 @@ void population_init(Population *p) {
   p->mass = 0;
 
   for (int i = SPECIES_ALGAE; i < SPECIES_SNAKE + 1; i++) {
-    Genome *genome = pangenome_getGenome(&p->pangenome, i);
-    for (int j = 0; j <= genome->initCountMax; j++) {
+    for (int j = 0; j <= p->pangenome.speciesInitCountMax[i]; j++) {
       Vector2 displacement = {pond_random(0, g_width),
                               pond_random(0, g_height)};
-      p->organisms[p->organismCount++] = organism_create(genome, displacement);
+      p->organisms[p->organismCount++] = organism_create(i, displacement);
     }
   }
 }
@@ -34,10 +34,14 @@ void population_update(Population *p) {
   }
 
   int theAliveCount = p->organismCount - theDeadCount;
+  char buf1[128];
+  snprintf(buf1, sizeof(buf1), "org, alive, dead count: %d, %d, %d",
+           p->organismCount, theAliveCount, theDeadCount);
+  log_debug(buf1);
   Organism **theAlive = (Organism **)malloc(sizeof(Organism *) * theAliveCount);
   for (int i = 0, j = 0; i < p->organismCount; i++) {
     if (p->organisms[i]->isDead) {
-      organism_destroy(p->organisms[i]);
+      organism_free(p->organisms[i]);
     } else {
       theAlive[j++] = p->organisms[i];
     }
@@ -70,6 +74,8 @@ void population_update(Population *p) {
     newOrganisms[i] = theBabies[j++];
   }
   free(p->organisms);
+  free(theAlive);
+  free(theBabies);
   p->organisms = newOrganisms;
   // SET NEW POPULATION: END
 

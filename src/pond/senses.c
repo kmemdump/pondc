@@ -60,7 +60,7 @@ void senses_repulse(Senses *s) {
 
 bool senses_isAttraction(Senses *s, Organism *other) {
   for (int i = 0; i < s->preyCount; i++) {
-    if (s->prey[i] == other->genome.species) {
+    if (s->prey[i] == other->genome->species) {
       return true;
     }
   }
@@ -69,7 +69,7 @@ bool senses_isAttraction(Senses *s, Organism *other) {
 
 bool senses_isRepulsion(Senses *s, Organism *other) {
   for (int i = 0; i < s->predatorCount; i++) {
-    if (s->predators[i] == other->genome.species) {
+    if (s->predators[i] == other->genome->species) {
       return true;
     }
   }
@@ -95,3 +95,9 @@ Senses *senses_create(Organism *organism, Species species) {
 
   return s;
 }
+
+void senses_free(Senses *s) {
+  free(s->prey);
+  free(s->predators);
+  free(s);
+};

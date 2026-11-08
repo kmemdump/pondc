@@ -3,26 +3,26 @@
 #include "pond/log.h"
 #include "pond/motor.h"
 #include "pond/painter.h"
+#include "pond/pangenome.h"
 #include "pond/senses.h"
 #include "pond/types.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-Organism *organism_create(Genome *genome, Vector2 displacement) {
+Organism *organism_create(Species species, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
-  o->genome = *genome;
-  genome_initDna(o->genome);
 
-  o->startMass =
-      pond_random(o->genome->dna.lowerMassLimit, o->genome->dna.upperMassLimit);
-  o->mass = o->startMass;
-  o->colour = o->genome->dna.colour;
-  o->randomColour = painter_randomColour();
-
+  o->genome = genome_create(species);
   o->motor = genome_createMotor(o->genome, o, displacement, pond_vrandom2D());
   o->appearance = genome_createAppearance(o->genome, o, o->genome->dna.colour);
   o->senses = genome_createSenses(o->genome, o);
+
+  o->colour = o->genome->dna.colour;
+  o->randomColour = painter_randomColour();
+  o->startMass =
+      pond_random(o->genome->dna.lowerMassLimit, o->genome->dna.upperMassLimit);
+  o->mass = o->startMass;
 
   return o;
 }
@@ -79,7 +79,7 @@ Organism *organism_makeBaby(Organism *o) {
   Vector2 displacement = pond_vmult(pond_vrandom2D(), o->mass);
   o->motor->displacement = pond_vadd(displacement, o->motor->displacement);
 
-  Organism *baby = organism_create(o->genome, displacement);
+  Organism *baby = organism_create(o->genome->species, displacement);
   baby->mass = o->mass * o->genome->dna.fissionFactor * ENTROPY;
   baby->motor->velocity = o->motor->velocity;
   o->mass = (o->mass - baby->mass / ENTROPY) * ENTROPY;
@@ -132,10 +132,11 @@ void organism_addColliding(Organism *o, Organism *other) {
   other->collidingWith[other->collidingCount++] = o;
 }
 
-void organism_destroy(Organism *organism) {
+void organism_free(Organism *organism) {
   free(organism->motor);
-  free(organism->appearance);
-  free(organism->senses);
+  appearance_free(organism->appearance);
+  senses_free(organism->senses);
+  genome_free(organism->genome);
   free(organism->collidingWith);
   free(organism);
 }

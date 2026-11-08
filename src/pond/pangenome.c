@@ -17,44 +17,10 @@ const float GROWTH_RATE_SNAKE = 0.3;
 const float GROWTH_RATE_FISH = 0.4;
 
 void pangenome_init(Pangenome *p) {
-  p->snake.species = SPECIES_SNAKE;
-  p->snake.initCountMax = SNAKE_COUNT_INIT;
-  p->snake.dietCount = 1;
-  p->snake.diet[0] = SPECIES_FISH;
-
-  p->fish.species = SPECIES_FISH;
-  p->fish.initCountMax = FISH_COUNT_INIT;
-  p->fish.dietCount = 2;
-  p->fish.diet[0] = SPECIES_SNAKE;
-  p->fish.diet[1] = SPECIES_ALGAE;
-
-  p->algae.species = SPECIES_ALGAE;
-  p->algae.initCountMax = ALGAE_COUNT_INIT;
-  p->algae.dietCount = 0;
-
-  p->speciesCount = 3;
-  p->speciesList[0] = SPECIES_ALGAE;
-  p->speciesList[1] = SPECIES_FISH;
-  p->speciesList[2] = SPECIES_SNAKE;
-}
-
-Species pangenome_randomSpecies(Pangenome *p) {
-  return p
-      ->speciesList[(int)(rand() / (double)RAND_MAX * (double)p->speciesCount)];
-}
-
-Genome *pangenome_getGenome(Pangenome *p, Species species) {
-  if (species == SPECIES_SNAKE) {
-    return &p->snake;
-  }
-  if (species == SPECIES_FISH) {
-    return &p->fish;
-  }
-  if (species == SPECIES_ALGAE) {
-    return &p->algae;
-  }
-  log_error("Null genome for species.");
-  return NULL;
+  p->speciesInitCountMax = malloc(sizeof(Species) * 4);
+  p->speciesInitCountMax[SPECIES_SNAKE] = SNAKE_COUNT_INIT;
+  p->speciesInitCountMax[SPECIES_FISH] = FISH_COUNT_INIT;
+  p->speciesInitCountMax[SPECIES_ALGAE] = ALGAE_COUNT_INIT;
 }
 
 bool genome_diet_contains(Genome *g, Species species) {
@@ -64,6 +30,36 @@ bool genome_diet_contains(Genome *g, Species species) {
     }
   }
   return false;
+}
+
+Genome *genome_create(Species species) {
+  assert(species);
+
+  Genome *genome = malloc(sizeof(Genome));
+  if (species == SPECIES_SNAKE) {
+    genome->species = SPECIES_SNAKE;
+    genome->dietCount = 1;
+    genome->diet = malloc(sizeof(Species) * genome->dietCount);
+    genome->diet[0] = SPECIES_FISH;
+  }
+
+  if (species == SPECIES_FISH) {
+    genome->species = SPECIES_FISH;
+    genome->dietCount = 2;
+    genome->diet = malloc(sizeof(Species) * genome->dietCount);
+    genome->diet[0] = SPECIES_SNAKE;
+    genome->diet[1] = SPECIES_ALGAE;
+  }
+
+  if (species == SPECIES_ALGAE) {
+    genome->species = SPECIES_ALGAE;
+    genome->dietCount = 0;
+    genome->diet = NULL;
+  }
+
+  genome_initDna(genome);
+
+  return genome;
 }
 
 void genome_initDna(Genome *g) {
@@ -126,7 +122,6 @@ Appearance *genome_createAppearance(Genome *g, Organism *organism,
   Appearance *appearance = (Appearance *)calloc(1, sizeof(Appearance));
   appearance->organism = organism;
   appearance->colour = colour;
-  appearance->points = (Vector2 *)malloc(100 * sizeof(Vector2));
   if (g->species == SPECIES_SNAKE) {
     appearance->kind = APPEARANCE_KIND_SNAKE;
   } else if (g->species == SPECIES_FISH) {
@@ -174,4 +169,11 @@ Senses *genome_createSenses(Genome *g, Organism *organism) {
     senses->predators[0] = SPECIES_SNAKE;
   }
   return senses;
+}
+
+void genome_free(Genome *g) {
+  if (g->diet) {
+    free(g->diet);
+  }
+  free(g);
 }

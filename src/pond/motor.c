@@ -245,7 +245,7 @@ void motor_bounceAgainstOther(Motor *m, Organism *other) {
                            pond_vsub(other->motor->velocity, m->velocity)));
   other->motor->velocity = pond_vsub(other->motor->velocity, newOtherVelocity);
 
-  if (m->kind == MOTOR_KIND_ALGAE && other->genome.species == SPECIES_ALGAE) {
+  if (m->kind == MOTOR_KIND_ALGAE && other->genome->species == SPECIES_ALGAE) {
     motor_agglutinate(m, other);
   }
 }

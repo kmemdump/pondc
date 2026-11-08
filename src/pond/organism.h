@@ -12,20 +12,19 @@ struct Organism {
   float startMass;
   float mass;
   float age;
-  Organism **collidingWith;
   int collidingCount;
   int collidingCapacity;
-
   Color colour;
   Color randomColour;
 
+  Organism **collidingWith;
   Genome *genome;
   Motor *motor;
   Appearance *appearance;
   Senses *senses;
 };
 
-Organism *organism_create(Genome *genome, Vector2 displacement);
+Organism *organism_create(Species species, Vector2 displacement);
 void organism_update(Organism *o);
 void organism_show(Organism *o);
 void organism_chomp(Organism *o, Organism *other);
@@ -37,6 +36,6 @@ void organism_sense(Organism *o, Organism *other);
 Species organism_species(Organism *o);
 bool organism_canIEat(Organism *o, Organism *other);
 void organism_addColliding(Organism *o, Organism *other);
-void organism_destroy(Organism *organism);
+void organism_free(Organism *organism);
 
 #endif
