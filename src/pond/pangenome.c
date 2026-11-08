@@ -32,6 +32,8 @@ bool genome_diet_contains(Genome *g, Species species) {
   return false;
 }
 
+void pangenome_free(Pangenome *p) { free(p->speciesInitCountMax); }
+
 Genome *genome_create(Species species) {
   assert(species);
 

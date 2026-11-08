@@ -33,6 +33,7 @@ struct Pangenome {
 };
 
 void pangenome_init(Pangenome *p);
+void pangenome_free(Pangenome *p);
 Genome *genome_create(Species species);
 void genome_initDna(Genome *g);
 Motor *genome_createMotor(Genome *g, Organism *organism,

@@ -3,6 +3,7 @@
 #include "pond/motor.h"
 #include "pond/organism.h"
 #include "pond/painter.h"
+#include "pond/pangenome.h"
 #include "pond/types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,4 +156,12 @@ bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   painter_debugOrganism(o2, BLACK);
 
   return true;
+}
+
+void population_free(Population *p) {
+  for (int i = 0; i < p->organismCount; i++) {
+    organism_free(p->organisms[i]);
+  }
+  free(p->organisms);
+  pangenome_free(&p->pangenome);
 }

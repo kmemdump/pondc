@@ -39,3 +39,5 @@ void pond_drawMouse() {
     DrawEllipse(GetMouseX(), GetMouseY(), 25, 25, WHITE);
   }
 }
+
+void pond_free(Pond *pond) { population_free(&pond->population); }

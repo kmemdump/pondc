@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 int log_file_descriptor = -1;
@@ -61,6 +62,8 @@ int main(void) {
     pond_update(&pond);
     EndDrawing();
   }
+
+  pond_free(&pond);
 
   CloseWindow();
   return 0;

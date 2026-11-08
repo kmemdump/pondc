@@ -14,5 +14,6 @@ typedef struct Pond {
 void pond_init(Pond *p, int width, int height);
 void pond_update(Pond *p);
 void pond_drawMouse();
+void pond_free(Pond *p);
 
 #endif
