@@ -1,4 +1,4 @@
-CC := gcc
+CC := cc
 CFLAGS := -Isrc -I/usr/include
 CDEBUGFLAGS := -g -rdynamic -fdiagnostics-color=always
 # fsanitize=address exits the program before the program crash from a 
