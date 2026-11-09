@@ -27,8 +27,6 @@ Motor *motor_create(MotorKind kind, Organism *organism,
                     Vector2 startDisplacement, Vector2 startVelocity);
 void motor_update(Motor *m);
 void motor_move(Motor *m);
-float motor_clamp(Motor *m, float input, float lowerLimit, float upperLimit);
-void motor_clampToWall(Motor *m);
 void motor_bounceIfWallCollision(Motor *m);
 void motor_bounceIfOrganismCollision(Motor *m);
 void motor_moveOutOfOverlap(Motor *m, Organism *other);

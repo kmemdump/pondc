@@ -29,6 +29,16 @@ Motor *motor_create(MotorKind kind, Organism *organism,
   return m;
 }
 
+static float clamp(float input, float lowerLimit, float upperLimit) {
+  if (input >= upperLimit) {
+    return upperLimit;
+  }
+  if (input <= lowerLimit) {
+    return lowerLimit;
+  }
+  return input;
+}
+
 void motor_update(Motor *m) {
   assert(m->self != NULL);
 
@@ -42,7 +52,8 @@ void motor_update(Motor *m) {
   }
 
   motor_move(m);
-  motor_clampToWall(m);
+  m->displacement.x = clamp(m->displacement.x, 0, g_width);
+  m->displacement.y = clamp(m->displacement.y, 0, g_height);
 }
 
 void motor_move(Motor *m) {
@@ -128,25 +139,6 @@ void motor_updateAccelerationAlgae(Motor *m) {
       pond_vmult(m->acceleration, ACCELERATION_GROWTH_FACTOR * 0.1f);
   acceleration = pond_vadd(acceleration, accelerationStep);
   m->acceleration = acceleration;
-}
-
-float motor_clamp(Motor *m, float input, float lowerLimit, float upperLimit) {
-  if (input >= upperLimit) {
-    return upperLimit;
-  }
-  if (input <= lowerLimit) {
-    return lowerLimit;
-  }
-  return input;
-}
-
-void motor_clampToWall(Motor *m) {
-  float x = m->displacement.x;
-  float y = m->displacement.y;
-  x = motor_clamp(m, x, 0, g_width);
-  y = motor_clamp(m, y, 0, g_height);
-  m->displacement.x = x;
-  m->displacement.y = y;
 }
 
 void motor_bounceIfWallCollision(Motor *m) {

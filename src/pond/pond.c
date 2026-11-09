@@ -4,21 +4,15 @@
 #include "pond/population.h"
 #include "pond/types.h"
 
-Color g_background = WHITE;
 float g_clock = 0;
 float g_clockMax = CLOCK_MAX;
 float g_clockIncrement = CLOCK_INCREMENT;
-float g_width = 0;
-float g_height = 0;
 bool g_biomassLock = false;
 
 void pond_init(Pond *pond, int width, int height) {
   pond->clock = 0;
   pond->clockMax = CLOCK_MAX;
   pond->clockIncrement = CLOCK_INCREMENT;
-
-  g_width = width;
-  g_height = height;
 
   painter_init();
   pangenome_init(&pond->population.pangenome);

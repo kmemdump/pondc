@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 const float ENTROPY = 0.99f;
-const float SENSE_DISTANCE = 200.0f;
+const float SENSE_DISTANCE = 300.0f;
 const float ATTRACTION_RATE = 2.0f;
 const float REPULSION_RATE = 3.0f;
 

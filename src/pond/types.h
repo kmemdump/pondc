@@ -18,14 +18,10 @@ typedef struct Genome Genome;
 typedef struct Motor Motor;
 typedef struct Appearance Appearance;
 
-extern Color g_background;
 extern float g_clock;
-extern float g_clockMax;
-extern float g_clockIncrement;
-extern float g_entropy;
-extern float g_width;
-extern float g_height;
 extern bool g_biomassLock;
+extern int g_width;
+extern int g_height;
 
 #define CLOCK_MAX 360.0f
 #define CLOCK_INCREMENT 0.05f

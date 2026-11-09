@@ -1,14 +1,16 @@
 #include "pond/pond.h"
+#include "pond/types.h"
 #include "raylib.h"
 #include <execinfo.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_HEIGHT = 1000;
+int g_width = SCREEN_WIDTH;
+int g_height = SCREEN_WIDTH;
 
 int log_file_descriptor = -1;
 
@@ -48,9 +50,6 @@ int main(void) {
   }
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pond");
-  g_width = SCREEN_WIDTH;
-  g_height = SCREEN_HEIGHT;
-  g_background = WHITE;
 
   Pond pond;
   pond_init(&pond, SCREEN_WIDTH, SCREEN_HEIGHT);
