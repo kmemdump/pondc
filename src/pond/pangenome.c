@@ -137,10 +137,14 @@ Appearance *genome_createAppearance(Genome *g, Organism *organism,
     appearance->growthRate = (appearance->kind == APPEARANCE_KIND_FISH)
                                  ? GROWTH_RATE_FISH
                                  : GROWTH_RATE_SNAKE;
+    appearance->pointCount = (int)(organism->mass / appearance->growthRate) + 2;
     appearance->pointCapacity = DEFAULT_POINT_CAPACITY;
+    if (appearance->pointCapacity < appearance->pointCount) {
+      appearance->pointCapacity = appearance->pointCount;
+    }
+
     appearance->points =
         (Vector2 *)malloc(sizeof(Vector2) * appearance->pointCapacity);
-    appearance->pointCount = (int)(organism->mass / appearance->growthRate) + 2;
     for (int i = 0; i < appearance->pointCount; i++) {
       appearance->points[i] = organism->motor->displacement;
     }

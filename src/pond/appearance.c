@@ -10,7 +10,7 @@
 
 static void updatePoints(Appearance *appearance) {
   Organism *organism = appearance->organism;
-  assert(organism->mass);
+  assert(organism->mass > 0);
   int newPointCount = (int)(organism->mass / appearance->growthRate) + 2;
   if (newPointCount > appearance->pointCapacity) {
     appearance->pointCapacity = newPointCount;
@@ -53,7 +53,6 @@ void appearance_show(Appearance *appearance) {
     drawTaperedBody(appearance);
 
     assert(appearance->pointCount > 1);
-
     float radius = organism->mass / 2.0f;
     Vector2 lastPoint = appearance->points[appearance->pointCount - 1];
     Vector2 finHeadingVector =
