@@ -1,5 +1,7 @@
 # pond
 
+![Demo](demo.gif)
+
 A simple 2D graphics engine and pond-ecosystem simulation, written in C on top of
 [raylib](https://github.com/raysan5/raylib).
 

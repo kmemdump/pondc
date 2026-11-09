@@ -5,12 +5,21 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 1000;
+const int SCREEN_HEIGHT = 1200;
+const char *RECORDED_FRAMES_DIR = "frames";
+
 int g_width = SCREEN_WIDTH;
-int g_height = SCREEN_WIDTH;
+int g_height = SCREEN_HEIGHT;
+
+typedef struct Args Args;
+struct Args {
+  bool record;
+  int recordedFrames;
+};
 
 int log_file_descriptor = -1;
 
@@ -31,7 +40,14 @@ void signal_action_handler(int sig) {
   raise(sig);
 }
 
-int main(void) {
+int main(int argc, char **argv) {
+  Args args;
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "--record") == 0) {
+      args.record = true;
+    }
+  }
+
   log_file_descriptor =
       open("./logs/sigsev.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
   if (log_file_descriptor == -1) {
@@ -59,9 +75,17 @@ int main(void) {
     BeginDrawing();
     pond_update(&pond);
 
-    DrawFPS(10, 10);
-    DrawText(TextFormat("frame: %.3f ms", GetFrameTime() * 1000.0f), 10, 30, 20,
-             DARKGRAY);
+    if (args.record) {
+      char path[64];
+      snprintf(path, 64, "%s/frame_%05d.png", RECORDED_FRAMES_DIR,
+               args.recordedFrames++);
+      TakeScreenshot(path);
+    } else {
+      DrawFPS(10, 10);
+      DrawText(TextFormat("frame: %.3f ms", GetFrameTime() * 1000.0f), 10, 30,
+               20, DARKGRAY);
+    }
+
     EndDrawing();
   }
 

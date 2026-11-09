@@ -7,9 +7,11 @@ CDEBUGFLAGS_SANITIZE := -g -rdynamic -fsanitize=address -fdiagnostics-color=alwa
 LDLIBS := -lraylib -lm
 
 BUILD_DIR := build
+FRAMES_DIR := frames
 TARGET := $(BUILD_DIR)/pond
 DEBUG_TARGET := $(TARGET)-debug
 DASAN_TARGET := $(TARGET)-dasan
+DEMO_TARGET := demo
 LOG_DIR := logs
 DEBUG_LOG := ./${LOG_DIR}/debug.log
 DASAN_LOG := ./${LOG_DIR}/dasan.log
@@ -21,12 +23,14 @@ all: build debug dasan
 
 build: $(TARGET)
 
-debug: $(SRCS)
+dirs: 
 	mkdir -p $(BUILD_DIR)
+	mkdir -p $(FRAMES_DIR)
+
+debug: dirs $(SRCS)
 	$(CC) $(CDEBUGFLAGS) $(CFLAGS) $(SRCS) -o $(DEBUG_TARGET) $(LDLIBS)
 
-dasan: $(SRCS)
-	mkdir -p $(BUILD_DIR)
+dasan: dirs $(SRCS)
 	$(CC) $(CDEBUGFLAGS_SANITIZE) $(CFLAGS) $(SRCS) -o $(DASAN_TARGET) $(LDLIBS)
 
 debug_test: debug
@@ -35,8 +39,16 @@ debug_test: debug
 dasan_test: dasan
 	timeout 5000 ./${TARGET}-dasan &> ${DASAN_LOG}
 
-$(TARGET): $(SRCS)
-	mkdir -p $(BUILD_DIR)
+video: 
+	ffmpeg -y -framerate 30 -i ${FRAMES_DIR}/frame_%05d.png \
+		-c:v libx264 -pix_fmt yuv420p -movflags +faststart ${DEMO_TARGET}.mp4
+
+gif:
+	ffmpeg -y -framerate 30 -i ${FRAMES_DIR}/frame_%05d.png \
+		-vf "scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+		${DEMO_TARGET}.gif
+
+$(TARGET): dirs $(SRCS)
 	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LDLIBS)
 
 run: $(TARGET)
