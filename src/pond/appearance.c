@@ -52,19 +52,20 @@ void appearance_show(Appearance *appearance) {
     updatePoints(appearance);
     drawTaperedBody(appearance);
 
-    assert(appearance->pointCount > 1);
-    float radius = organism->mass / 2.0f;
-    Vector2 lastPoint = appearance->points[appearance->pointCount - 1];
-    Vector2 finHeadingVector =
-        pond_vsub(appearance->points[appearance->pointCount - 2], lastPoint);
-    float heading = pond_vheading(finHeadingVector);
+    // TODO: Fix this
+    // assert(appearance->pointCount > 1);
+    // float radius = organism->mass / 2.0f;
+    // Vector2 lastPoint = appearance->points[appearance->pointCount - 1];
+    // Vector2 finHeadingVector =
+    //     pond_vsub(appearance->points[appearance->pointCount - 2], lastPoint);
+    // float heading = pond_vheading(finHeadingVector);
 
-    rlPushMatrix();
-    rlTranslatef(lastPoint.x, lastPoint.y, 0.0f);
-    rlRotatef(heading, 0.0f, 0.0f, 1.0f);
-    DrawTriangle((Vector2){radius, 0.0f}, (Vector2){0.0f, radius},
-                 (Vector2){0.0f, -radius}, organism->colour);
-    rlPopMatrix();
+    // rlPushMatrix();
+    // rlTranslatef(lastPoint.x, lastPoint.y, 0.0f);
+    // rlRotatef(heading, 0.0f, 0.0f, 1.0f);
+    // DrawTriangle((Vector2){radius, 0.0f}, (Vector2){0.0f, radius},
+    //              (Vector2){0.0f, -radius}, organism->colour);
+    // rlPopMatrix();
   }
 
   if (appearance->kind == APPEARANCE_KIND_SNAKE) {

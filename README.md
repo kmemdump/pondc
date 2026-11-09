@@ -22,3 +22,7 @@ Note: `pkg-config` is not installed; the Makefile uses explicit flags
 
 `./build/pond` requires a display (GLFW/OpenGL); run under `timeout` if you just
 want to smoke-test startup.
+
+## TODO
+
+- Merge senses with motor functionality for more consistent motion

@@ -11,9 +11,9 @@
 #include <stdlib.h>
 
 const float ENTROPY = 0.99f;
-const float SENSE_DISTANCE = 400.0f;
-const float ATTRACTION_RATE = 10.0f;
-const float REPULSION_RATE = 12.0f;
+const float SENSE_DISTANCE = 200;
+const float ATTRACTION_RATE = 20.0f;
+const float REPULSION_RATE = 25.0f;
 
 Organism *organism_create(Species species, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
@@ -65,10 +65,10 @@ void organism_update(Organism *o) {
 
   motor_update(o->motor);
 
-  if (o->hasAttraction) {
-    organism_sensesAttract(o);
-  } else if (o->hasRepulsion) {
+  if (o->hasRepulsion) {
     organism_sensesRepulse(o);
+  } else if (o->hasAttraction) {
+    organism_sensesAttract(o);
   }
 }
 
