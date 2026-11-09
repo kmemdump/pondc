@@ -151,11 +151,10 @@ void population_update(Population *p) {
 
 void population_interactWithOthers(Population *p, Organism *organism,
                                    int index) {
-  if (organism->isDead) {
-    return;
-  }
-
   for (int i = index + 1; i < p->organismCount; i++) {
+    if (organism->isDead) {
+      return;
+    }
     Organism *other = p->organisms[i];
     if (other->isDead || other == organism) {
       continue;
