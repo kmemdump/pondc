@@ -5,14 +5,15 @@
 #include "pond/types.h"
 #include <assert.h>
 #include <math.h>
+#include <raylib.h>
 #include <stdlib.h>
 
 #define TERMINAL_VELOCITY 1.0f
 #define STAGNANT_VELOCITY 0.5f
 #define COLLISION_DAMPING_FACTOR -0.9f
-#define ACCELERATION_NOISE_FACTOR 15.0f
+#define ACCELERATION_NOISE_FACTOR 5.0f
 #define ACCELERATION_GROWTH_FACTOR 0.45f
-#define SLITHER_FACTOR 1.4f
+#define SLITHER_FACTOR 1.5f
 
 Motor *motor_create(MotorKind kind, Organism *organism,
                     Vector2 startDisplacement, Vector2 startVelocity) {
@@ -42,7 +43,6 @@ static float clamp(float input, float lowerLimit, float upperLimit) {
 void motor_update(Motor *m) {
   assert(m->self != NULL);
 
-  // TODO: mxb
   motor_bounceIfOrganismCollision(m);
 
   if (m->kind == MOTOR_KIND_SNAKE) {
@@ -72,11 +72,19 @@ void motor_move(Motor *m) {
   if (m->kind == MOTOR_KIND_ALGAE) {
     motor_updateAccelerationAlgae(m);
   }
+
+  if (!isfinite(m->acceleration.x) || !isfinite(m->acceleration.y)) {
+    m->acceleration = (Vector2){0.0f, 0.0f};
+  }
+
   // Update velocity
   Vector2 velocity = m->velocity;
   velocity = pond_vadd(velocity, m->acceleration);
   float mag = pond_vmag(velocity);
-  if (mag > TERMINAL_VELOCITY) {
+  if (!isfinite(mag) || mag == 0) {
+    m->velocity = (Vector2){pond_random(-STAGNANT_VELOCITY, STAGNANT_VELOCITY),
+                            pond_random(-STAGNANT_VELOCITY, STAGNANT_VELOCITY)};
+  } else if (mag > TERMINAL_VELOCITY) {
     m->velocity = pond_vdiv(velocity, mag / TERMINAL_VELOCITY);
   } else if (mag < STAGNANT_VELOCITY) {
     m->velocity = pond_vmult(velocity, STAGNANT_VELOCITY / mag);
@@ -103,10 +111,16 @@ void motor_updateVelocitySnake(Motor *m) {
   m->velocity = v;
 
   float mag = pond_vmag(m->velocity);
-  if (mag > TERMINAL_VELOCITY * 2) {
-    m->velocity = pond_vdiv(m->velocity, mag / (TERMINAL_VELOCITY * 2));
-  } else if (mag < STAGNANT_VELOCITY * 2) {
-    m->velocity = pond_vmult(m->velocity, (STAGNANT_VELOCITY * 2) / mag);
+
+  if (!isfinite(mag) || mag == 0) {
+    m->velocity = (Vector2){pond_random(-STAGNANT_VELOCITY, STAGNANT_VELOCITY),
+                            pond_random(-STAGNANT_VELOCITY, STAGNANT_VELOCITY)};
+  } else if (mag > TERMINAL_VELOCITY * SLITHER_FACTOR) {
+    m->velocity =
+        pond_vdiv(m->velocity, mag / (TERMINAL_VELOCITY * SLITHER_FACTOR));
+  } else if (mag < STAGNANT_VELOCITY * SLITHER_FACTOR) {
+    m->velocity =
+        pond_vmult(m->velocity, (STAGNANT_VELOCITY * SLITHER_FACTOR) / mag);
   }
 }
 
@@ -121,7 +135,12 @@ void motor_updateVelocityAlgae(Motor *m) {
 
   float algaeBeSlow = 0.1f;
 
-  if (mag > TERMINAL_VELOCITY * algaeBeSlow) {
+  if (!isfinite(mag)) {
+    m->velocity = (Vector2){pond_random(-STAGNANT_VELOCITY * algaeBeSlow,
+                                        STAGNANT_VELOCITY * algaeBeSlow),
+                            pond_random(-STAGNANT_VELOCITY * algaeBeSlow,
+                                        STAGNANT_VELOCITY * algaeBeSlow)};
+  } else if (mag > TERMINAL_VELOCITY * algaeBeSlow) {
     m->velocity = pond_vdiv(v, mag / (TERMINAL_VELOCITY * algaeBeSlow));
   } else if (mag < STAGNANT_VELOCITY * algaeBeSlow) {
     m->velocity = pond_vmult(v, (STAGNANT_VELOCITY * algaeBeSlow) / mag);

@@ -103,10 +103,10 @@ void population_update(Population *p) {
     organism_show(organism);
     double tB = GetTime();
     loopTimes[0] += tB - tA;
-    organism_update(organism);
+    population_interactWithOthers(p, organism, i);
     double tC = GetTime();
     loopTimes[1] += tC - tB;
-    population_interactWithOthers(p, organism, i);
+    organism_update(organism);
     double tD = GetTime();
     loopTimes[2] += tD - tC;
     if (!g_biomassLock) {
@@ -121,7 +121,7 @@ void population_update(Population *p) {
 
   char b[256];
   snprintf(b, sizeof(b),
-           "loop: ms show=%.2f update=%.2f interact=%.2f photo=%.2f",
+           "loop: ms show=%.2f interact=%.2f update=%.2f photo=%.2f",
            loopTimes[0] * 1000, loopTimes[1] * 1000, loopTimes[2] * 1000,
            loopTimes[3] * 1000);
   log_debug(b);
@@ -181,7 +181,7 @@ bool population_areMeeting(Population *p, Organism *o1, Organism *o2) {
   Vector2 selfToOther =
       pond_vsub(o2->motor->displacement, o1->motor->displacement);
   float distanceBetweenCenters = pond_vmag(selfToOther);
-  assert(!isnan(distanceBetweenCenters));
+  assert(isfinite(distanceBetweenCenters));
   if (distanceBetweenCenters > (o2->mass + o1->mass) / 2.0f) {
     return false;
   }

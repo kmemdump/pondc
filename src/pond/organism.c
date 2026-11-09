@@ -11,9 +11,9 @@
 #include <stdlib.h>
 
 const float ENTROPY = 0.99f;
-const float SENSE_DISTANCE = 300.0f;
-const float ATTRACTION_RATE = 2.0f;
-const float REPULSION_RATE = 3.0f;
+const float SENSE_DISTANCE = 400.0f;
+const float ATTRACTION_RATE = 10.0f;
+const float REPULSION_RATE = 12.0f;
 
 Organism *organism_create(Species species, Vector2 displacement) {
   Organism *o = (Organism *)calloc(1, sizeof(Organism));
