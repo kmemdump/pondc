@@ -1,7 +1,7 @@
 CC := cc
-CFLAGS := -Isrc -I/usr/include
+CFLAGS := -Isrc -I/usr/include -std=c99
 CDEBUGFLAGS := -g -rdynamic -fdiagnostics-color=always
-# fsanitize=address exits the program before the program crash from a 
+# fsanitize=address exits the program before the program crash from a
 # segmentation fault
 CDEBUGFLAGS_SANITIZE := -g -rdynamic -fsanitize=address -fdiagnostics-color=always
 LDLIBS := -lraylib -lm
@@ -23,7 +23,7 @@ all: build debug dasan
 
 build: $(TARGET)
 
-dirs: 
+dirs:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(FRAMES_DIR)
 
@@ -39,7 +39,7 @@ debug_test: debug
 dasan_test: dasan
 	timeout 5000 ./${TARGET}-dasan &> ${DASAN_LOG}
 
-video: 
+video:
 	ffmpeg -y -framerate 30 -i ${FRAMES_DIR}/frame_%05d.png \
 		-c:v libx264 -pix_fmt yuv420p -movflags +faststart ${DEMO_TARGET}.mp4
 
